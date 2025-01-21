@@ -1,0 +1,111 @@
+[gd_scene load_steps=13 format=3 uid="uid://bqy0hijh0piyl"]
+
+[ext_resource type="PackedScene" uid="uid://dveirswtux86l" path="res://Scenes/Player.tscn" id="2_ofovn"]
+[ext_resource type="Texture2D" uid="uid://bhxivwgl4l1v1" path="res://addons/kenney_prototype_textures/dark/texture_02.png" id="2_pyj3u"]
+[ext_resource type="Script" path="res://Scripts/director.gd" id="3_akill"]
+[ext_resource type="PackedScene" uid="uid://dgfp0at38l1od" path="res://Scenes/enemy.tscn" id="4_cfy4k"]
+[ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://UI_Theme.tres" id="5_mjsm0"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_njric"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_3u536"]
+sky_material = SubResource("ProceduralSkyMaterial_njric")
+
+[sub_resource type="Environment" id="Environment_vjb77"]
+background_mode = 2
+sky = SubResource("Sky_3u536")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_765s2"]
+vertices = PackedVector3Array(-48.4354, 0.69043, -46.0479, -48.4354, 0.69043, 45.9521, 48.3146, 0.69043, 45.9521, 48.3146, 0.69043, -46.0479)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c8yg3"]
+albedo_texture = ExtResource("2_pyj3u")
+uv1_scale = Vector3(0.1, 0.1, 0.1)
+uv1_triplanar = true
+uv2_scale = Vector3(0.1, 0.1, 0.1)
+uv2_triplanar = true
+
+[sub_resource type="Curve" id="Curve_5efj3"]
+_data = [Vector2(0.01, 5), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ra81f"]
+bg_color = Color(0.113725, 0.113725, 0.113725, 0.427451)
+
+[node name="Main" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vjb77")
+
+[node name="Player" parent="." instance=ExtResource("2_ofovn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.4411, 6.51394, 0)
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_765s2")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D"]
+use_collision = true
+size = Vector3(97.8708, 0.619141, 93.0957)
+material = SubResource("StandardMaterial3D_c8yg3")
+
+[node name="Director" type="Node3D" parent="."]
+script = ExtResource("3_akill")
+spawnable_enemies_in_round = Array[PackedScene]([ExtResource("4_cfy4k")])
+enemy_point_array = Array[int]([1])
+round_at_points_relationship = SubResource("Curve_5efj3")
+
+[node name="EndRoundUI" type="Control" parent="Director"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Director/EndRoundUI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -101.0
+offset_top = -48.0
+offset_right = 101.0
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Director/EndRoundUI/PanelContainer"]
+layout_mode = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Director/EndRoundUI/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="Director/EndRoundUI/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Round won!"
+
+[node name="Panel" type="Panel" parent="Director/EndRoundUI"]
+z_index = -2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ra81f")
