@@ -12,15 +12,16 @@ func _ready():
 func parse_resource_file():
     weapon.set_values(current_weapon)
 
+func _process(_delta):
+    weapon.set_target_to_camera_hit_point(raycast_from_camera())
+
 func _unhandled_input(event: InputEvent) -> void:
     if event.is_action_pressed("shoot"):
         if weapon.can_shoot():
-            weapon.raycast_from_muzzle(raycast_from_camera())
+            weapon.raycast_from_muzzle()
     
 
 func raycast_from_camera() -> Vector3:
     return camera_raycast.get_collision_point()
 
 
-# call the weapon raycast to raycast from muzzle point
-# -------------------------------------
