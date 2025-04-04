@@ -6,18 +6,12 @@ var max_ammo : int
 var current_ammo : int
 var ammo_consumed_at_once : int
 var shooting_range : Vector3
-var gun_node
 @onready var shot_timer : Timer = $ShotTimer
 @onready var reload_timer : Timer = $ReloadTimer
 @onready var raycast : RayCast3D = $RayCast3D
+@onready var ammo_indicator: Label = $"../../../../VisibleUI/PanelContainer/MarginContainer/VBoxContainer/AmmoIndicator"
+@onready var mesh_instance : MeshInstance3D = $MeshInstance3D
 @onready var shooting_player : AudioStreamPlayer3D = $ShootPlayer3D
-var ammo_indicator : Label
-const WEAPON_SWAY_MOVE_AMOUNT = 0.035
-const WEAPON_SWAY_FREQUENCY = 1.4
-var sway_time := 0.0
-
-func _ready() -> void:
-    ammo_indicator = Globals.ui.ammo
 
 func set_values(weapon_resource : WeaponResource):
     shot_timer.one_shot = true
@@ -35,28 +29,16 @@ func set_values(weapon_resource : WeaponResource):
     self.damage = weapon_resource.damage
     self.max_ammo = weapon_resource.max_ammo
     self.current_ammo = max_ammo
-    gun_node = weapon_resource.gun_scene.instantiate()
-    gun_node.position = weapon_resource.scene_position
-    add_child(gun_node)
+    self.mesh_instance.mesh = weapon_resource.mesh
     ammo_indicator.text = str(current_ammo,"/",max_ammo)
 
-
-func _process(delta):
-    sway_time += delta
-    self.transform.origin = Vector3(
-        sin(sway_time * WEAPON_SWAY_FREQUENCY * 0.5) * WEAPON_SWAY_MOVE_AMOUNT,
-        cos(sway_time * WEAPON_SWAY_FREQUENCY) * WEAPON_SWAY_MOVE_AMOUNT,
-        0
-    )
-
-func set_target_to_camera_hit_point(hit_point : Vector3):
-    raycast.target_position = to_local(hit_point)
-    
-func raycast_from_muzzle():
+func raycast_from_muzzle(hit_point : Vector3):
     # succeed shooting
     if current_ammo > 0:
         shot_timer.start()
         shooting_player.play()
+        if to_local(hit_point) <= shooting_range:
+            raycast.target_position = to_local(hit_point)
         if raycast.get_collider():
            raycast.get_collider().take_damage(damage) 
         current_ammo -= ammo_consumed_at_once
