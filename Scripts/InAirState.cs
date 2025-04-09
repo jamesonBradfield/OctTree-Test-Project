@@ -38,7 +38,7 @@ public partial class InAirState : State
     {
         base.PhysicsUpdate(delta);
         WishDir = player.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y);
-        player.Velocity -= ((Vector3)ProjectSettings.GetSetting("physics/3d/default_gravity") * (float)delta);
+        player.Velocity -= (new Vector3(0f, 12.0f, 0f) * delta);
         var CurrentSpeedInWishDirection = player.Velocity.Dot(WishDir);
         var CappedSpeed = Mathf.Min((AirMoveSpeed * WishDir).Length(), AirCap);
         var SpeedLeftTillCap = CappedSpeed - CurrentSpeedInWishDirection;

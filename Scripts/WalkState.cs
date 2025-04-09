@@ -7,14 +7,11 @@ public partial class WalkState : State
     float GroundAccel = 14.0f;
     float GroundDecel = 10f;
     float GroundFriction = 6.0f;
-    float Sensitivity = .006f;
     float HeadbobAmplitude = 0.06f;
     float HeadbobFrequency = 2.4f;
     float HeadbobTime = 0.0f;
     Player player;
     Vector3 WishDir = Vector3.Zero;
-    Vector2 CurrentControllerLook;
-    float ControllerSensitivity = .05f;
     Vector2 inputDir;
     public override void Enter()
     {
@@ -28,7 +25,6 @@ public partial class WalkState : State
 
     public override void Update(float delta)
     {
-
         inputDir = Input.GetVector("left", "right", "up", "down");
         if (inputDir == Vector2.Zero)
         {

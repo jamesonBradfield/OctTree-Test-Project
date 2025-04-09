@@ -74,7 +74,7 @@ round_at_points_relationship = SubResource("Curve_5efj3")
 
 [node name="Player" parent="." node_paths=PackedStringArray("VelocityIndicator", "HealthBar", "PausePanel", "DeathPanel") instance=ExtResource("2_ofovn")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.551303, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13519, 0)
 VelocityIndicator = NodePath("../UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/VelocityIndicator")
 HealthBar = NodePath("../UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/HealthBar")
 PausePanel = NodePath("../UI/PausePanel")
