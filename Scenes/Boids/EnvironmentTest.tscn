@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3 uid="uid://c22na00vd51w"]
+
+[ext_resource type="Script" uid="uid://buxv5fskf06au" path="res://Scripts/boid/terrain.gd" id="1_gbgre"]
+[ext_resource type="PackedScene" uid="uid://ea7hq63egq7l" path="res://Scenes/Boids/Leader.tscn" id="2_70nl7"]
+[ext_resource type="Script" uid="uid://dloejr5cxovx" path="res://Scripts/quad_tree/QuadTreeBoidCreator.gd" id="3_nn5ve"]
+[ext_resource type="PackedScene" uid="uid://1wiprh6kfc3w" path="res://Scenes/Boids/Boid.tscn" id="4_e7l6a"]
+[ext_resource type="Script" uid="uid://ymdcjbtkbdtl" path="res://Scripts/boid/QuadTreeDebugDraw.gd" id="5_tammk"]
+
+[node name="EnvironmentTest" type="Node3D"]
+script = ExtResource("1_gbgre")
+
+[node name="Leader" parent="." instance=ExtResource("2_70nl7")]
+
+[node name="QuadTreeBoidCreator" type="Node3D" parent="." node_paths=PackedStringArray("leader")]
+script = ExtResource("3_nn5ve")
+boid_scene = ExtResource("4_e7l6a")
+leader = NodePath("../Leader")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="Terrain" type="Node3D" parent="."]
+
+[node name="Node3D" type="Node3D" parent="."]
+script = ExtResource("5_tammk")
+boid_creator_node = NodePath("../QuadTreeBoidCreator")

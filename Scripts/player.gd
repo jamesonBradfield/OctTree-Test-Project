@@ -1,12 +1,16 @@
 class_name Player
-extends Damageable 
+extends Damageable
+# declare variables
 @onready var head : Node3D = $Head
 @onready var camera : Camera3D = $Head/Camera3D
-@onready var velocity_indicator : Label = $VisibleUI/PanelContainer/MarginContainer/VBoxContainer/VelocityIndicator
-@onready var health_bar : ProgressBar =$VisibleUI/PanelContainer/MarginContainer/VBoxContainer/HealthBar
+@onready var starting_fov : float 
+@onready var moving_fast_fov : float = 80
+@onready var velocity_indicator : Label = $/root/Main/UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/VelocityIndicator
+@onready var health_bar : ProgressBar =$/root/Main/UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/HealthBar
 @onready var pause_panel : PanelContainer = $Control/PausePanel
 @onready var you_died : PanelContainer = $Control/YouDiedPanel
 @onready var bhop_player : AudioStreamPlayer3D = $BhopPlayer3D
+@onready var footstep_player : AudioStreamPlayer3D = $FootStepPlayer3D
 @export var look_sensitivity : float = 0.006
 @export var controller_look_sensitivity : float = 0.05
 @export var jump_velocity := 6.0
@@ -22,7 +26,7 @@ var headbob_time := 0.0
 @export var air_move_speed := 500.0
 
 # ground movement settings
-@export var walk_speed := 7.0
+@export var walk_speed := 8.5
 @export var sprint_speed := 8.5
 @export var ground_accel := 14.0
 @export var ground_decel := 10
@@ -33,13 +37,14 @@ var wish_dir := Vector3.ZERO
 var _cur_controller_look = Vector2()
 
 func get_move_speed() -> float:
-    return sprint_speed if Input.is_action_pressed("sprint") else walk_speed
-
+    # return sprint_speed if Input.is_action_pressed("sprint") else walk_speed
+    return walk_speed
 
 func _ready():
     super()
     health_bar.max_value = max_health
     health_bar.value = current_health
+    starting_fov = camera.fov
 
 func _unhandled_input(event):
     if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -55,6 +60,9 @@ func _headbob_effect(delta):
         sin(headbob_time * HEADBOB_FREQUENCY) * HEADBOB_MOVE_AMOUNT,
         0
     )
+    # might want to add a timer to keep this from playing again.
+    if  not footstep_player.playing and sin(headbob_time * HEADBOB_FREQUENCY) >= .98 or not footstep_player.playing and sin(headbob_time * HEADBOB_FREQUENCY) <= -.98:
+        footstep_player.play()
 
 func _handle_controller_look_input(delta):
     var target_look = Input.get_vector("look_right","look_left","look_down", "look_up")
@@ -95,12 +103,8 @@ func _handle_ground_physics(delta) -> void:
 
 func _handle_air_physics(delta) -> void:
     self.velocity.y -= ProjectSettings.get_setting("physics/3d/default_gravity") * delta
-    # Classic battle tested & fan favorite source/quake air movement recipe
     var cur_speed_in_wish_dir = self.velocity.dot(wish_dir)
-    # Wish speed (if wish_dir > 0 length) capped to air_cap
     var capped_speed = min((air_move_speed * wish_dir).length(), air_cap)
-    # How much to get to the speed the player wishes (in the new dir)
-    # Notice this allows for infinite speed. If wish_dir is perpindicular, we always need to add velocity no matter how fast we're going. this is what allows for things like bhop in CSS & Quake. Also happens to just give some very nice feeling movement & responsiveness when in the air.
     var add_speed_till_cap = capped_speed - cur_speed_in_wish_dir
     if add_speed_till_cap > 0:
         var accel_speed = air_accel * air_move_speed * delta
@@ -119,7 +123,9 @@ func _physics_process(delta):
         _handle_ground_physics(delta)
     else:
         _handle_air_physics(delta)
+
     velocity_indicator.text = str(int(self.velocity.length()))
+    camera.fov = lerp(starting_fov,moving_fast_fov,abs(self.velocity.length()/20))
     move_and_slide()
 
 func _on_mouse_slider_value_changed(value: float) -> void:

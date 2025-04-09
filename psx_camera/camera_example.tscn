@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://cpw3h80y7gl2o"]
 
-[ext_resource type="Shader" path="res://psx_camera/psx_camera_shader.gdshader" id="1_nv63b"]
-[ext_resource type="Script" path="res://psx_camera/fly_camera.gd" id="3_4w045"]
+[ext_resource type="Shader" uid="uid://msnke2wunvcm" path="res://psx_camera/psx_camera_shader.gdshader" id="1_nv63b"]
+[ext_resource type="Script" uid="uid://3hohruwjfqso" path="res://psx_camera/fly_camera.gd" id="3_4w045"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lialc"]
 
@@ -34,7 +34,7 @@ render_priority = 0
 shader = ExtResource("1_nv63b")
 shader_parameter/enable_fog = true
 shader_parameter/fog_color = Color(0.729412, 0.729412, 0.729412, 1)
-shader_parameter/noise_color = null
+shader_parameter/noise_color = Color(0, 0, 0, 1)
 shader_parameter/fog_distance = 100.0
 shader_parameter/fog_fade_range = 50.0
 shader_parameter/enable_noise = false

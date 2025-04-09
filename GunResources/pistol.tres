@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="WeaponResource" load_steps=3 format=3 uid="uid://cyfhdoge2ai3v"]
 
-[ext_resource type="Script" path="res://Scripts/weapon_resource.gd" id="1_26wrd"]
-[ext_resource type="AudioStream" uid="uid://bc0sty18r2irn" path="res://Silenced_Shot.wav" id="2_dk4ow"]
+[ext_resource type="Script" uid="uid://t3m840yj8jp1" path="res://Scripts/weapon_resource.gd" id="1_26wrd"]
+[ext_resource type="AudioStream" uid="uid://bc0sty18r2irn" path="res://Sfx/Silenced_Shot.wav" id="2_dk4ow"]
 
 [resource]
 script = ExtResource("1_26wrd")

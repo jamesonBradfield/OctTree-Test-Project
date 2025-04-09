@@ -1,10 +1,15 @@
-[gd_scene load_steps=13 format=3 uid="uid://bqy0hijh0piyl"]
+[gd_scene load_steps=23 format=3 uid="uid://bqy0hijh0piyl"]
 
 [ext_resource type="PackedScene" uid="uid://dveirswtux86l" path="res://Scenes/Player.tscn" id="2_ofovn"]
-[ext_resource type="Texture2D" uid="uid://bhxivwgl4l1v1" path="res://addons/kenney_prototype_textures/dark/texture_02.png" id="2_pyj3u"]
-[ext_resource type="Script" path="res://Scripts/director.gd" id="3_akill"]
+[ext_resource type="Script" uid="uid://b6tbjchu68sdd" path="res://Scripts/director.gd" id="3_akill"]
 [ext_resource type="PackedScene" uid="uid://dgfp0at38l1od" path="res://Scenes/enemy.tscn" id="4_cfy4k"]
-[ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://UI_Theme.tres" id="5_mjsm0"]
+[ext_resource type="Texture2D" uid="uid://bntsdi3pa3iuh" path="res://addons/kenney_prototype_textures/orange/texture_01.png" id="5_bmxlf"]
+[ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://Shaders/UI_Theme.tres" id="5_mjsm0"]
+[ext_resource type="Texture2D" uid="uid://1sr6in04puk2" path="res://addons/kenney_prototype_textures/dark/texture_01.png" id="5_pbw6q"]
+[ext_resource type="Script" uid="uid://vuqvvcdqpl0b" path="res://Scripts/PauseMenu.gd" id="5_v1gob"]
+[ext_resource type="Texture2D" uid="uid://qfp07mp0da6c" path="res://addons/kenney_prototype_textures/light/texture_01.png" id="6_4kpch"]
+[ext_resource type="Texture2D" uid="uid://cavge046wlig" path="res://addons/kenney_prototype_textures/green/texture_08.png" id="7_grg3l"]
+[ext_resource type="Script" uid="uid://b3sqpclf5ru0" path="res://Scripts/grenade.gd" id="7_jw32o"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_njric"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -19,23 +24,38 @@ sky = SubResource("Sky_3u536")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="NavigationMesh" id="NavigationMesh_765s2"]
-vertices = PackedVector3Array(-48.4354, 0.69043, -46.0479, -48.4354, 0.69043, 45.9521, 48.3146, 0.69043, 45.9521, 48.3146, 0.69043, -46.0479)
-polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c8yg3"]
-albedo_texture = ExtResource("2_pyj3u")
-uv1_scale = Vector3(0.1, 0.1, 0.1)
-uv1_triplanar = true
-uv2_scale = Vector3(0.1, 0.1, 0.1)
-uv2_triplanar = true
-
 [sub_resource type="Curve" id="Curve_5efj3"]
-_data = [Vector2(0.01, 5), 0.0, 0.0, 0, 0]
+_data = [Vector2(0.01, 0), 0.0, 0.0, 0, 0]
 point_count = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v1gob"]
+albedo_texture = ExtResource("5_pbw6q")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_frkhe"]
+albedo_texture = ExtResource("5_bmxlf")
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1p5hy"]
+albedo_texture = ExtResource("6_4kpch")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h1m7h"]
+albedo_texture = ExtResource("7_grg3l")
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_erwvk"]
+albedo_texture = ExtResource("7_grg3l")
+uv1_triplanar = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ra81f"]
 bg_color = Color(0.113725, 0.113725, 0.113725, 0.427451)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jw32o"]
+font_size = 30
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_50glp"]
+radius = 7.168
 
 [node name="Main" type="Node3D"]
 
@@ -46,33 +66,348 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_vjb77")
 
-[node name="Player" parent="." instance=ExtResource("2_ofovn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.4411, 6.51394, 0)
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
-navigation_mesh = SubResource("NavigationMesh_765s2")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D"]
-use_collision = true
-size = Vector3(97.8708, 0.619141, 93.0957)
-material = SubResource("StandardMaterial3D_c8yg3")
-
 [node name="Director" type="Node3D" parent="."]
 script = ExtResource("3_akill")
 spawnable_enemies_in_round = Array[PackedScene]([ExtResource("4_cfy4k")])
 enemy_point_array = Array[int]([1])
 round_at_points_relationship = SubResource("Curve_5efj3")
 
-[node name="EndRoundUI" type="Control" parent="Director"]
-visible = false
+[node name="Player" parent="." node_paths=PackedStringArray("VelocityIndicator", "HealthBar", "PausePanel", "DeathPanel") instance=ExtResource("2_ofovn")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.551303, 0)
+VelocityIndicator = NodePath("../UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/VelocityIndicator")
+HealthBar = NodePath("../UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/HealthBar")
+PausePanel = NodePath("../UI/PausePanel")
+DeathPanel = NodePath("../UI/YouDiedPanel")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0305815, 0, -0.499756)
+material_override = SubResource("StandardMaterial3D_v1gob")
+use_collision = true
+size = Vector3(46.3256, 1, 30.3013)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.1359, 4.81451, -12.6898)
+material_override = SubResource("StandardMaterial3D_frkhe")
+use_collision = true
+size = Vector3(6.69922, 10.629, 6.22449)
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.7313, 4.81451, 11.7805)
+material_override = SubResource("StandardMaterial3D_1p5hy")
+use_collision = true
+size = Vector3(6.41699, 10.629, 6.21631)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.9984, 5.65845, 0.325281)
+material_override = SubResource("StandardMaterial3D_h1m7h")
+use_collision = true
+size = Vector3(3.42041, 12.3605, 34.4212)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.701, 5.68024, -0.725885)
+material_override = SubResource("StandardMaterial3D_erwvk")
+use_collision = true
+size = Vector3(3.42041, 12.3605, 35.0717)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.43225, 5.68024, -16.8514)
+material_override = SubResource("StandardMaterial3D_h1m7h")
+use_collision = true
+size = Vector3(50.4828, 12.3605, 2.64797)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.56577, 5.68024, 16.0699)
+material_override = SubResource("StandardMaterial3D_h1m7h")
+use_collision = true
+size = Vector3(49.6951, 12.3605, 2.64797)
+
+[node name="UI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_v1gob")
 
-[node name="PanelContainer" type="PanelContainer" parent="Director/EndRoundUI"]
+[node name="PausePanel" type="PanelContainer" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -82.0
+offset_top = -115.0
+offset_right = 82.0
+offset_bottom = 115.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/PausePanel"]
+layout_mode = 2
+mouse_filter = 0
+theme = ExtResource("5_mjsm0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/PausePanel/MarginContainer"]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="UI/PausePanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Paused"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Resume" type="Button" parent="UI/PausePanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Resume"
+
+[node name="Options" type="Button" parent="UI/PausePanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Options"
+
+[node name="Movement" type="Button" parent="UI/PausePanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Movement"
+
+[node name="Quit" type="Button" parent="UI/PausePanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit"
+
+[node name="OptionsPanel" type="PanelContainer" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -131.0
+offset_top = -116.0
+offset_right = 131.0
+offset_bottom = 116.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/OptionsPanel"]
+layout_mode = 2
+mouse_filter = 0
+theme = ExtResource("5_mjsm0")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/OptionsPanel/MarginContainer"]
+layout_mode = 2
+mouse_filter = 0
+
+[node name="Return" type="Button" parent="UI/OptionsPanel/MarginContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "  <  "
+
+[node name="Label" type="Label" parent="UI/OptionsPanel/MarginContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+text = "Options"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionsContainer" type="VBoxContainer" parent="UI/OptionsPanel/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="MouseContainer" type="HBoxContainer" parent="UI/OptionsPanel/MarginContainer/OptionsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="MouseSensitivity" type="Label" parent="UI/OptionsPanel/MarginContainer/OptionsContainer/MouseContainer"]
+layout_mode = 2
+text = "Mouse Sensitivity"
+
+[node name="MouseSlider" type="HSlider" parent="UI/OptionsPanel/MarginContainer/OptionsContainer/MouseContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+min_value = 0.001
+max_value = 0.05
+step = 0.001
+value = 0.006
+
+[node name="ControllerContainer" type="HBoxContainer" parent="UI/OptionsPanel/MarginContainer/OptionsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ControllerSensitivity" type="Label" parent="UI/OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer"]
+layout_mode = 2
+text = "Controller Sensitivity"
+
+[node name="ControllerSlider" type="HSlider" parent="UI/OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+min_value = 0.001
+max_value = 0.5
+step = 0.001
+value = 0.006
+
+[node name="AutoBhopContainer" type="HBoxContainer" parent="UI/OptionsPanel/MarginContainer/OptionsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AutoBhop" type="Label" parent="UI/OptionsPanel/MarginContainer/OptionsContainer/AutoBhopContainer"]
+layout_mode = 2
+text = "AutoBhop"
+
+[node name="CheckBox" type="CheckBox" parent="UI/OptionsPanel/MarginContainer/OptionsContainer/AutoBhopContainer"]
+layout_mode = 2
+
+[node name="MovementPanel" type="PanelContainer" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -131.0
+offset_top = -116.0
+offset_right = 131.0
+offset_bottom = 116.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/MovementPanel"]
+layout_mode = 2
+mouse_filter = 0
+theme = ExtResource("5_mjsm0")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/MovementPanel/MarginContainer"]
+layout_mode = 2
+mouse_filter = 0
+
+[node name="Return" type="Button" parent="UI/MovementPanel/MarginContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "  <  "
+
+[node name="Label" type="Label" parent="UI/MovementPanel/MarginContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+text = "Movement"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionsContainer" type="VBoxContainer" parent="UI/MovementPanel/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="MouseContainer" type="HBoxContainer" parent="UI/MovementPanel/MarginContainer/OptionsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="MouseSensitivity" type="Label" parent="UI/MovementPanel/MarginContainer/OptionsContainer/MouseContainer"]
+layout_mode = 2
+text = "Mouse Sensitivity"
+
+[node name="MouseSlider" type="HSlider" parent="UI/MovementPanel/MarginContainer/OptionsContainer/MouseContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+min_value = 0.001
+max_value = 0.05
+step = 0.001
+value = 0.006
+
+[node name="ControllerContainer" type="HBoxContainer" parent="UI/MovementPanel/MarginContainer/OptionsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ControllerSensitivity" type="Label" parent="UI/MovementPanel/MarginContainer/OptionsContainer/ControllerContainer"]
+layout_mode = 2
+text = "Controller Sensitivity"
+
+[node name="ControllerSlider" type="HSlider" parent="UI/MovementPanel/MarginContainer/OptionsContainer/ControllerContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+min_value = 0.001
+max_value = 0.5
+step = 0.001
+value = 0.006
+
+[node name="AutoBhopContainer" type="HBoxContainer" parent="UI/MovementPanel/MarginContainer/OptionsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AutoBhop" type="Label" parent="UI/MovementPanel/MarginContainer/OptionsContainer/AutoBhopContainer"]
+layout_mode = 2
+text = "AutoBhop"
+
+[node name="CheckBox" type="CheckBox" parent="UI/MovementPanel/MarginContainer/OptionsContainer/AutoBhopContainer"]
+layout_mode = 2
+
+[node name="YouDiedPanel" type="PanelContainer" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -135.0
+offset_top = -47.0
+offset_right = 135.0
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/YouDiedPanel"]
+layout_mode = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/YouDiedPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/YouDiedPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "You Died"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/YouDiedPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+alignment = 1
+
+[node name="Button" type="Button" parent="UI/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Quit"
+
+[node name="Button2" type="Button" parent="UI/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Retry"
+
+[node name="EndRoundUI" type="Control" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/EndRoundUI"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -86,21 +421,21 @@ offset_bottom = 48.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Director/EndRoundUI/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="UI/EndRoundUI/PanelContainer"]
 layout_mode = 2
 theme = ExtResource("5_mjsm0")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Director/EndRoundUI/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/EndRoundUI/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="Director/EndRoundUI/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="UI/EndRoundUI/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Round won!"
 
-[node name="Panel" type="Panel" parent="Director/EndRoundUI"]
+[node name="Panel" type="Panel" parent="UI/EndRoundUI"]
 z_index = -2
 layout_mode = 1
 anchors_preset = 15
@@ -109,3 +444,122 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ra81f")
+
+[node name="PlayerViewUI" type="Control" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Cursor" type="Control" parent="UI/PlayerViewUI"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/PlayerViewUI/Cursor"]
+layout_mode = 2
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Panel" type="Panel" parent="UI/PlayerViewUI/Cursor/HBoxContainer"]
+custom_minimum_size = Vector2(10, 5)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Panel2" type="Panel" parent="UI/PlayerViewUI/Cursor/HBoxContainer"]
+custom_minimum_size = Vector2(10, 5)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/PlayerViewUI/Cursor"]
+layout_mode = 2
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Panel" type="Panel" parent="UI/PlayerViewUI/Cursor/VBoxContainer"]
+custom_minimum_size = Vector2(5, 10)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Panel2" type="Panel" parent="UI/PlayerViewUI/Cursor/VBoxContainer"]
+custom_minimum_size = Vector2(5, 10)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/PlayerViewUI"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -125.0
+offset_right = 115.0
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/PlayerViewUI/PanelContainer"]
+layout_mode = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/PlayerViewUI/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="AmmoIndicator" type="Label" parent="UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_mjsm0")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VelocityIndicator" type="Label" parent="UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer"]
+z_index = 1
+layout_mode = 2
+theme = ExtResource("5_mjsm0")
+label_settings = SubResource("LabelSettings_jw32o")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HealthBar" type="ProgressBar" parent="UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_mjsm0")
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.61037, 7.40295)
+script = ExtResource("7_jw32o")
+
+[node name="Timer" type="Timer" parent="Node3D"]
+
+[node name="Area3D" type="Area3D" parent="Node3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Area3D"]
+shape = SubResource("SphereShape3D_50glp")
+
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Resume" to="UI" method="resume"]
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Options" to="UI" method="_on_options_pressed"]
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Movement" to="UI" method="_on_movement_pressed"]
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Quit" to="UI" method="quit"]
+[connection signal="pressed" from="UI/OptionsPanel/MarginContainer/HBoxContainer2/Return" to="UI" method="return_to_pause_menu"]
+[connection signal="pressed" from="UI/MovementPanel/MarginContainer/HBoxContainer2/Return" to="UI" method="return_to_pause_menu"]
+[connection signal="pressed" from="UI/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer/Button" to="UI" method="quit"]
+[connection signal="pressed" from="UI/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer/Button2" to="UI" method="retry"]

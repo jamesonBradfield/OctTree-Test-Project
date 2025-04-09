@@ -9,7 +9,7 @@ var shooting_range : Vector3
 @onready var shot_timer : Timer = $ShotTimer
 @onready var reload_timer : Timer = $ReloadTimer
 @onready var raycast : RayCast3D = $RayCast3D
-@onready var ammo_indicator: Label = $"../../../../VisibleUI/PanelContainer/MarginContainer/VBoxContainer/AmmoIndicator"
+@onready var ammo_indicator: Label = $/root/Main/UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/AmmoIndicator
 @onready var mesh_instance : MeshInstance3D = $MeshInstance3D
 @onready var shooting_player : AudioStreamPlayer3D = $ShootPlayer3D
 

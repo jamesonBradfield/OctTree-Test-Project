@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ea7hq63egq7l"]
+
+[ext_resource type="Script" uid="uid://bsxg7ky3h5vct" path="res://Scripts/boid/leader.gd" id="1_8yfe6"]
+
+[node name="Leader" type="Node3D"]
+script = ExtResource("1_8yfe6")

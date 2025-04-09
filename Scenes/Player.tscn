@@ -1,14 +1,18 @@
-[gd_scene load_steps=15 format=3 uid="uid://dveirswtux86l"]
+[gd_scene load_steps=18 format=3 uid="uid://dveirswtux86l"]
 
-[ext_resource type="Script" path="res://Scripts/player.gd" id="1_jhl48"]
-[ext_resource type="Shader" path="res://psx_camera/psx_camera_shader.gdshader" id="2_vuwrv"]
-[ext_resource type="Script" path="res://Scripts/weaponManager.gd" id="3_nc0eh"]
-[ext_resource type="AudioStream" uid="uid://cv0tks51pe8b8" path="res://Footstep.wav" id="3_ssx28"]
-[ext_resource type="Resource" uid="uid://cyfhdoge2ai3v" path="res://GunResources/pistol.tres" id="4_dms61"]
-[ext_resource type="Script" path="res://Scripts/weapon.gd" id="4_x833e"]
-[ext_resource type="Script" path="res://Scripts/PauseMenu.gd" id="7_rt0ry"]
-[ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://UI_Theme.tres" id="8_0vxsx"]
-[ext_resource type="AudioStream" uid="uid://dqb2ct05r42j" path="res://bhop_sound.ogg" id="9_nm3ss"]
+[ext_resource type="Script" uid="uid://yxl02041i4vs" path="res://Scripts/Player.cs" id="1_bhhdu"]
+[ext_resource type="Shader" uid="uid://msnke2wunvcm" path="res://psx_camera/psx_camera_shader.gdshader" id="2_vuwrv"]
+[ext_resource type="Script" uid="uid://40aohvg5a747" path="res://Scripts/weaponManager.gd" id="3_nc0eh"]
+[ext_resource type="Resource" uid="uid://cyfhdoge2ai3v" path="res://Resources/Guns/pistol.tres" id="4_dms61"]
+[ext_resource type="Script" uid="uid://curonio8etgkb" path="res://Scripts/weapon.gd" id="4_x833e"]
+[ext_resource type="AudioStream" uid="uid://bwy5uhqer6bo" path="res://Sounds/166508__yoyodaman234__concrete-footstep-2.wav" id="6_52ee3"]
+[ext_resource type="Script" uid="uid://cad3p4ikeidpu" path="res://Scripts/Damageable.cs" id="8_megsn"]
+[ext_resource type="Script" uid="uid://cjhdyjimy8q0q" path="res://Scripts/StateMachine.cs" id="9_miouo"]
+[ext_resource type="AudioStream" uid="uid://dqb2ct05r42j" path="res://Sfx/bhop_sound.ogg" id="9_nm3ss"]
+[ext_resource type="Script" uid="uid://bfe46220a1gds" path="res://Scripts/WalkState.cs" id="10_o3h8g"]
+[ext_resource type="Script" uid="uid://doecb4bcd70m0" path="res://Scripts/JumpingState.cs" id="11_1e7my"]
+[ext_resource type="Script" uid="uid://drv313hgsu5b" path="res://Scripts/InAirState.cs" id="12_arntx"]
+[ext_resource type="Script" uid="uid://clit33apas14h" path="res://Scripts/IdleState.cs" id="13_lslt6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j53ao"]
 
@@ -17,7 +21,7 @@ render_priority = 0
 shader = ExtResource("2_vuwrv")
 shader_parameter/enable_fog = true
 shader_parameter/fog_color = Color(0.729412, 0.729412, 0.729412, 1)
-shader_parameter/noise_color = null
+shader_parameter/noise_color = Color(0, 0, 0, 1)
 shader_parameter/fog_distance = 50.0
 shader_parameter/fog_fade_range = 50.0
 shader_parameter/enable_noise = true
@@ -32,13 +36,15 @@ material = SubResource("ShaderMaterial_2rap5")
 flip_faces = true
 size = Vector2(2, 2)
 
-[sub_resource type="LabelSettings" id="LabelSettings_ch7f6"]
-font_size = 30
-
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_gjl25"]
 
-[node name="Player" type="CharacterBody3D"]
-script = ExtResource("1_jhl48")
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("Head", "Camera", "Damageable", "BhopPlayer", "FootstepPlayer")]
+script = ExtResource("1_bhhdu")
+Head = NodePath("Head")
+Camera = NodePath("Head/Camera3D")
+Damageable = NodePath("Damageable")
+BhopPlayer = NodePath("BhopPlayer3D")
+FootstepPlayer = NodePath("FootStepPlayer3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -82,288 +88,7 @@ debug_shape_thickness = 5
 [node name="ShootPlayer3D" type="AudioStreamPlayer3D" parent="Head/Camera3D/WeaponManager/Weapon"]
 
 [node name="FootStepPlayer3D" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("3_ssx28")
-
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("7_rt0ry")
-
-[node name="PausePanel" type="PanelContainer" parent="Control"]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -82.0
-offset_top = -115.0
-offset_right = 82.0
-offset_bottom = 115.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("8_0vxsx")
-
-[node name="MarginContainer" type="MarginContainer" parent="Control/PausePanel"]
-layout_mode = 2
-mouse_filter = 0
-theme = ExtResource("8_0vxsx")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/PausePanel/MarginContainer"]
-layout_mode = 2
-mouse_filter = 0
-theme_override_constants/separation = 14
-
-[node name="Label" type="Label" parent="Control/PausePanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Paused"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Resume" type="Button" parent="Control/PausePanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Resume"
-
-[node name="Options" type="Button" parent="Control/PausePanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Options"
-
-[node name="Quit" type="Button" parent="Control/PausePanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Quit"
-
-[node name="OptionsPanel" type="PanelContainer" parent="Control"]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -131.0
-offset_top = -116.0
-offset_right = 131.0
-offset_bottom = 116.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("8_0vxsx")
-
-[node name="MarginContainer" type="MarginContainer" parent="Control/OptionsPanel"]
-layout_mode = 2
-theme = ExtResource("8_0vxsx")
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="Control/OptionsPanel/MarginContainer"]
-layout_mode = 2
-
-[node name="Return" type="Button" parent="Control/OptionsPanel/MarginContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "  <  "
-
-[node name="Label" type="Label" parent="Control/OptionsPanel/MarginContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 0
-text = "Options"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="OptionsContainer" type="VBoxContainer" parent="Control/OptionsPanel/MarginContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="MouseContainer" type="HBoxContainer" parent="Control/OptionsPanel/MarginContainer/OptionsContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="MouseSensitivity" type="Label" parent="Control/OptionsPanel/MarginContainer/OptionsContainer/MouseContainer"]
-layout_mode = 2
-text = "Mouse Sensitivity"
-
-[node name="MouseSlider" type="HSlider" parent="Control/OptionsPanel/MarginContainer/OptionsContainer/MouseContainer"]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-min_value = 0.001
-max_value = 0.05
-step = 0.001
-value = 0.006
-
-[node name="ControllerContainer" type="HBoxContainer" parent="Control/OptionsPanel/MarginContainer/OptionsContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="ControllerSensitivity" type="Label" parent="Control/OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer"]
-layout_mode = 2
-text = "Controller Sensitivity"
-
-[node name="ControllerSlider" type="HSlider" parent="Control/OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer"]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-min_value = 0.001
-max_value = 0.5
-step = 0.001
-value = 0.006
-
-[node name="AutoBhopContainer" type="HBoxContainer" parent="Control/OptionsPanel/MarginContainer/OptionsContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="AutoBhop" type="Label" parent="Control/OptionsPanel/MarginContainer/OptionsContainer/AutoBhopContainer"]
-layout_mode = 2
-text = "AutoBhop"
-
-[node name="CheckBox" type="CheckBox" parent="Control/OptionsPanel/MarginContainer/OptionsContainer/AutoBhopContainer"]
-layout_mode = 2
-
-[node name="YouDiedPanel" type="PanelContainer" parent="Control"]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -135.0
-offset_top = -47.0
-offset_right = 135.0
-offset_bottom = 47.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Control/YouDiedPanel"]
-layout_mode = 2
-theme = ExtResource("8_0vxsx")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/YouDiedPanel/MarginContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Control/YouDiedPanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "You Died"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/YouDiedPanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-alignment = 1
-
-[node name="Button" type="Button" parent="Control/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-text = "Quit"
-
-[node name="Button2" type="Button" parent="Control/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-text = "Retry"
-
-[node name="VisibleUI" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Cursor" type="Control" parent="VisibleUI"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VisibleUI/Cursor"]
-layout_mode = 2
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_constants/separation = 15
-alignment = 1
-
-[node name="Panel" type="Panel" parent="VisibleUI/Cursor/HBoxContainer"]
-custom_minimum_size = Vector2(10, 5)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="Panel2" type="Panel" parent="VisibleUI/Cursor/HBoxContainer"]
-custom_minimum_size = Vector2(10, 5)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VisibleUI/Cursor"]
-layout_mode = 2
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_constants/separation = 15
-alignment = 1
-
-[node name="Panel" type="Panel" parent="VisibleUI/Cursor/VBoxContainer"]
-custom_minimum_size = Vector2(5, 10)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="Panel2" type="Panel" parent="VisibleUI/Cursor/VBoxContainer"]
-custom_minimum_size = Vector2(5, 10)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="PanelContainer" type="PanelContainer" parent="VisibleUI"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -125.0
-offset_right = 115.0
-grow_vertical = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="VisibleUI/PanelContainer"]
-layout_mode = 2
-theme = ExtResource("8_0vxsx")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VisibleUI/PanelContainer/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="AmmoIndicator" type="Label" parent="VisibleUI/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme = ExtResource("8_0vxsx")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VelocityIndicator" type="Label" parent="VisibleUI/PanelContainer/MarginContainer/VBoxContainer"]
-z_index = 1
-layout_mode = 2
-theme = ExtResource("8_0vxsx")
-label_settings = SubResource("LabelSettings_ch7f6")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HealthBar" type="ProgressBar" parent="VisibleUI/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme = ExtResource("8_0vxsx")
+stream = ExtResource("6_52ee3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -372,11 +97,22 @@ mesh = SubResource("CapsuleMesh_gjl25")
 [node name="BhopPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("9_nm3ss")
 
-[connection signal="pressed" from="Control/PausePanel/MarginContainer/VBoxContainer/Resume" to="Control" method="resume"]
-[connection signal="pressed" from="Control/PausePanel/MarginContainer/VBoxContainer/Options" to="Control" method="_on_options_pressed"]
-[connection signal="pressed" from="Control/PausePanel/MarginContainer/VBoxContainer/Quit" to="Control" method="quit"]
-[connection signal="pressed" from="Control/OptionsPanel/MarginContainer/HBoxContainer2/Return" to="Control" method="return_to_pause_menu"]
-[connection signal="value_changed" from="Control/OptionsPanel/MarginContainer/OptionsContainer/MouseContainer/MouseSlider" to="." method="_on_mouse_slider_value_changed"]
-[connection signal="value_changed" from="Control/OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer/ControllerSlider" to="." method="_on_controller_slider_value_changed"]
-[connection signal="pressed" from="Control/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer/Button" to="Control" method="quit"]
-[connection signal="pressed" from="Control/YouDiedPanel/MarginContainer/VBoxContainer/HBoxContainer/Button2" to="Control" method="retry"]
+[node name="Damageable" type="Node" parent="."]
+script = ExtResource("8_megsn")
+CurrentHealth = 100
+
+[node name="FSM" type="Node" parent="."]
+script = ExtResource("9_miouo")
+initialState = NodePath("Idle")
+
+[node name="Walk" type="Node" parent="FSM"]
+script = ExtResource("10_o3h8g")
+
+[node name="Jumping" type="Node" parent="FSM"]
+script = ExtResource("11_1e7my")
+
+[node name="InAir" type="Node" parent="FSM"]
+script = ExtResource("12_arntx")
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("13_lslt6")

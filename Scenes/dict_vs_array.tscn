@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://blssm1web6p2p"]
+
+[ext_resource type="Script" uid="uid://0rmb6k1opp57" path="res://Scripts/dict_vs_array.gd" id="1_30v5y"]
+
+[node name="DictVsArray" type="Node3D"]
+script = ExtResource("1_30v5y")

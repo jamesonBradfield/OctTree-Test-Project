@@ -1,0 +1,83 @@
+[gd_scene load_steps=20 format=3 uid="uid://caffqectxmplk"]
+
+[ext_resource type="PackedScene" uid="uid://w402xp4vnxv6" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_dirt_small_A.gltf.glb" id="1_fw0dj"]
+[ext_resource type="PackedScene" uid="uid://dampnswfrt6di" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_dirt_small_B.gltf.glb" id="2_5xw4e"]
+[ext_resource type="PackedScene" uid="uid://bmhlmlugxt4h8" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_dirt_small_C.gltf.glb" id="3_b2td4"]
+[ext_resource type="PackedScene" uid="uid://bp02y7yqsupfj" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_dirt_small_corner.gltf.glb" id="4_gk515"]
+[ext_resource type="PackedScene" uid="uid://d2xh8q4y23j5y" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_dirt_small_D.gltf.glb" id="5_hmc5c"]
+[ext_resource type="PackedScene" uid="uid://dgwh7yiwx0hgg" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_dirt_small_weeds.gltf.glb" id="6_td0tk"]
+[ext_resource type="PackedScene" uid="uid://bixhm2nrsh1qf" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small.gltf.glb" id="7_2cw3l"]
+[ext_resource type="PackedScene" uid="uid://cg51suuhtprbx" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small_broken_A.gltf.glb" id="8_tdlnf"]
+[ext_resource type="PackedScene" uid="uid://dxlemii1yo30b" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small_broken_B.gltf.glb" id="9_8jxrv"]
+[ext_resource type="PackedScene" uid="uid://camjk51c85i3d" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small_corner.gltf.glb" id="10_cj4lg"]
+[ext_resource type="PackedScene" uid="uid://dmn5og4oo1otq" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small_decorated.gltf.glb" id="11_wh0ft"]
+[ext_resource type="PackedScene" uid="uid://rmr7j1orrr5d" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small_weeds_A.gltf.glb" id="12_0qhve"]
+[ext_resource type="PackedScene" uid="uid://dcg25evr4j32" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_tile_small_weeds_B.gltf.glb" id="13_0yfbs"]
+[ext_resource type="PackedScene" uid="uid://c0xkx1injrn0v" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_wood_small.gltf.glb" id="14_ru2lq"]
+[ext_resource type="PackedScene" uid="uid://cl4s0yui75o7h" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/floor_wood_small_dark.gltf.glb" id="15_vt2jy"]
+[ext_resource type="PackedScene" uid="uid://b60u2iai2j1u" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/barrel_small.gltf.glb" id="16_xmke4"]
+[ext_resource type="PackedScene" uid="uid://cp6f6c41b3vol" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/barrel_small_stack.gltf.glb" id="17_c5ibr"]
+[ext_resource type="PackedScene" uid="uid://dbfdwyye74l7n" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/box_small.gltf.glb" id="18_c3aks"]
+[ext_resource type="PackedScene" uid="uid://dwnqxjvks1hm2" path="res://addons/kaykit_dungeon_remastered/Assets/gltf/box_small_decorated.gltf.glb" id="19_afipc"]
+
+[node name="Library" type="Node3D"]
+
+[node name="floor_dirt_small_A_gltf" parent="." instance=ExtResource("1_fw0dj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="floor_dirt_small_B_gltf" parent="." instance=ExtResource("2_5xw4e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 1)
+
+[node name="floor_dirt_small_C_gltf" parent="." instance=ExtResource("3_b2td4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 1)
+
+[node name="floor_dirt_small_corner_gltf" parent="." instance=ExtResource("4_gk515")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 1)
+
+[node name="floor_dirt_small_D_gltf" parent="." instance=ExtResource("5_hmc5c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1)
+
+[node name="floor_dirt_small_weeds_gltf" parent="." instance=ExtResource("6_td0tk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 1)
+
+[node name="floor_tile_small_gltf" parent="." instance=ExtResource("7_2cw3l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 1)
+
+[node name="floor_tile_small_broken_A_gltf" parent="." instance=ExtResource("8_tdlnf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 1)
+
+[node name="floor_tile_small_broken_B_gltf" parent="." instance=ExtResource("9_8jxrv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 1)
+
+[node name="floor_tile_small_corner_gltf" parent="." instance=ExtResource("10_cj4lg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 1)
+
+[node name="floor_tile_small_decorated_gltf" parent="." instance=ExtResource("11_wh0ft")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 1)
+
+[node name="floor_tile_small_weeds_A_gltf" parent="." instance=ExtResource("12_0qhve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, 1)
+
+[node name="floor_tile_small_weeds_B_gltf" parent="." instance=ExtResource("13_0yfbs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 1)
+
+[node name="floor_tile_small_weeds_B_gltf2" parent="." instance=ExtResource("13_0yfbs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+
+[node name="floor_wood_small_gltf" parent="." instance=ExtResource("14_ru2lq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 1)
+
+[node name="floor_wood_small_dark_gltf" parent="." instance=ExtResource("15_vt2jy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 1)
+
+[node name="barrel_small_gltf" parent="." instance=ExtResource("16_xmke4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 1)
+
+[node name="barrel_small_stack_gltf" parent="." instance=ExtResource("17_c5ibr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, 1)
+
+[node name="box_small_gltf" parent="." instance=ExtResource("18_c3aks")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 1)
+
+[node name="box_small_decorated_gltf" parent="." instance=ExtResource("19_afipc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 1)

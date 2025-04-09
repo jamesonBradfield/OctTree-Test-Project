@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkktlt13ku18p"]
+
+[ext_resource type="Script" uid="uid://g84bcr2u18ed" path="res://Scripts/powerups/fire_rate_powerup.gd" id="1_0orn2"]
+
+[node name="FireRatePowerup" type="Node"]
+script = ExtResource("1_0orn2")

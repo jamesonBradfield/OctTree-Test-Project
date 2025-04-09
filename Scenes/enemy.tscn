@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://dgfp0at38l1od"]
 
-[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_l8peu"]
-[ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://UI_Theme.tres" id="2_s2jro"]
+[ext_resource type="Script" uid="uid://6u4ssjn450jh" path="res://Scripts/enemy.gd" id="1_l8peu"]
+[ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://Shaders/UI_Theme.tres" id="2_s2jro"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3v540"]
 albedo_color = Color(0.674815, 0.674815, 0.674815, 1)

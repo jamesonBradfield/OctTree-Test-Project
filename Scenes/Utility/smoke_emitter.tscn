@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://b6beuwi8oavmv"]
+
+[ext_resource type="Texture2D" uid="uid://c3vllky4xa5td" path="res://Shaders/smoke_trail.png" id="1_g7srk"]
+
+[sub_resource type="Curve" id="Curve_idowx"]
+_data = [Vector2(0, 0.481319), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="CurveTexture" id="CurveTexture_rws4q"]
+curve = SubResource("Curve_idowx")
+
+[sub_resource type="Curve" id="Curve_xpit1"]
+_data = [Vector2(0.00793651, 0.287912), 0.0, 0.0, 0, 0, Vector2(1, 0.0857142), -1.08953, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jwdql"]
+curve = SubResource("Curve_xpit1")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_57j0k"]
+lifetime_randomness = 1.0
+emission_shape_scale = Vector3(0.1, 1, 1)
+direction = Vector3(0, 0, -1)
+spread = 4.821
+initial_velocity_max = 147.35
+gravity = Vector3(0, -5, 0)
+scale_curve = SubResource("CurveTexture_jwdql")
+alpha_curve = SubResource("CurveTexture_rws4q")
+turbulence_noise_strength = 0.1
+turbulence_noise_speed = Vector3(0.2, 0, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nhyoi"]
+transparency = 3
+alpha_hash_scale = 0.57
+alpha_antialiasing_mode = 0
+shading_mode = 0
+albedo_color = Color(0.678431, 0.678431, 0.678431, 0.768627)
+albedo_texture = ExtResource("1_g7srk")
+
+[sub_resource type="QuadMesh" id="QuadMesh_hklmy"]
+material = SubResource("StandardMaterial3D_nhyoi")
+
+[node name="SmokeEmitter" type="GPUParticles3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.273243, -0.0158958, -2.56901)
+layers = 2
+emitting = false
+amount = 20
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_57j0k")
+draw_pass_1 = SubResource("QuadMesh_hklmy")

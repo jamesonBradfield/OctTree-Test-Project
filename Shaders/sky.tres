@@ -1,0 +1,44 @@
+[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://bjnhlk54uosan"]
+
+[ext_resource type="Shader" path="res://Shaders/sky.gdshader" id="1_33my0"]
+[ext_resource type="Texture2D" uid="uid://bk8bqqwsf0hru" path="res://Shaders/cloud_tex.tres" id="2_cjaeu"]
+[ext_resource type="Texture2D" uid="uid://67j8mhtl4h10" path="res://Shaders/shooting_star.png" id="3_3vrqp"]
+
+[sub_resource type="Gradient" id="Gradient_teijv"]
+offsets = PackedFloat32Array(0.0306604, 0.125, 0.988208)
+colors = PackedColorArray(0, 0, 0, 1, 0.416747, 0.416747, 0.416747, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yfkwb"]
+frequency = 0.025
+fractal_lacunarity = 1.93
+fractal_gain = 0.728
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cv537"]
+width = 32
+height = 32
+color_ramp = SubResource("Gradient_teijv")
+noise = SubResource("FastNoiseLite_yfkwb")
+
+[resource]
+shader = ExtResource("1_33my0")
+shader_parameter/clouds_samples = 16
+shader_parameter/shadow_sample = 1
+shader_parameter/clouds_density = 0.4
+shader_parameter/clouds_scale = 1.0
+shader_parameter/clouds_smoothness = 0.09
+shader_parameter/clouds_light_color = Color(0.639467, 0.626784, 0.613884, 1)
+shader_parameter/clouds_shadow_intensity = 1.0
+shader_parameter/cloud_shape_sampler = ExtResource("2_cjaeu")
+shader_parameter/cloud_noise_sampler = SubResource("NoiseTexture2D_cv537")
+shader_parameter/cloud_curves = ExtResource("2_cjaeu")
+shader_parameter/high_clouds_density = 0.0
+shader_parameter/top_color = Color(0.137255, 0.129412, 0.133333, 1)
+shader_parameter/bottom_color = Color(0.137255, 0.129412, 0.133333, 1)
+shader_parameter/sun_scatter = Color(0.137255, 0.129412, 0.133333, 1)
+shader_parameter/astro_tint = Color(0.138159, 0.128644, 0.135174, 1)
+shader_parameter/astro_scale = 10.0
+shader_parameter/astro_intensity = 1.0
+shader_parameter/stars_intensity = 5.0
+shader_parameter/shooting_stars_intensity = 4.1
+shader_parameter/shooting_star_tint = Color(0.912594, 0.979098, 1, 1)
+shader_parameter/shooting_star_sampler = ExtResource("3_3vrqp")

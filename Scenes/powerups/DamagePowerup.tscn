@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://di68fhwy43523"]
+
+[ext_resource type="Script" uid="uid://d1oibs0bjy0hp" path="res://Scripts/powerups/damage_powerup.gd" id="1_tn7n0"]
+
+[node name="DamagePowerup" type="Node"]
+script = ExtResource("1_tn7n0")
+flat_increase_amount = 20.0

@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dw2nlr3h2usb8"]
+
+[node name="Option1" type="PanelContainer"]
+size_flags_vertical = 8
+mouse_filter = 1
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(160, 240)
+layout_mode = 2
+
+[node name="Name" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="Rarity" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
