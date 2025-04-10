@@ -13,6 +13,7 @@ public partial class WalkState : State
     Player player;
     Vector3 WishDir = Vector3.Zero;
     Vector2 inputDir;
+
     public override void Enter()
     {
         player = fsm.GetParent<Player>();

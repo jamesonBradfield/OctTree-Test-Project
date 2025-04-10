@@ -11,16 +11,16 @@
 			"uuid": "12f26f30-131a-466b-8c19-adaa8c13ed5f",
 			"title": "Todo",
 			"tasks": [
-				"b92c2747-93d2-4bf5-8988-aa484fab6a68",
 				"242658f4-10d4-4663-b525-e2580ae3ea02",
-				"5bc1afe8-66f9-4d4e-a2ba-c6f349e5a827"
+				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
+				"1a5aa2a3-a871-4633-9fec-c98a23e93048"
 			]
 		},
 		{
 			"uuid": "9e5db075-f448-4d71-9fcb-c1611ea4e6d5",
 			"title": "Doing",
 			"tasks": [
-				"81e6d4f1-a1ce-4afb-be04-783ec74daa1b"
+				"60088e11-0d5c-4971-b0a9-180ce352a4cf"
 			]
 		},
 		{
@@ -29,7 +29,11 @@
 			"tasks": [
 				"842271f3-4a3d-44c2-b17c-a18fed482ab2",
 				"954bc780-0469-4780-8d10-ef1ea984c306",
-				"f02aa490-8bd8-4166-8074-70f19e386e47"
+				"f02aa490-8bd8-4166-8074-70f19e386e47",
+				"b92c2747-93d2-4bf5-8988-aa484fab6a68",
+				"81e6d4f1-a1ce-4afb-be04-783ec74daa1b",
+				"5bc1afe8-66f9-4d4e-a2ba-c6f349e5a827",
+				"11b2a7a9-9a74-4353-b97c-f2a6aa97844e"
 			]
 		}
 	],
@@ -64,10 +68,27 @@
 		},
 		{
 			"uuid": "242658f4-10d4-4663-b525-e2580ae3ea02",
-			"title": "add movement debug UI",
+			"title": "add movement State UI",
 			"description": "",
 			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
-			"steps": []
+			"steps": [
+				{
+					"details": "create UI for State Debug",
+					"done": true
+				},
+				{
+					"details": "Link to FSM",
+					"done": false
+				},
+				{
+					"details": "Fix State Transitions",
+					"done": false
+				},
+				{
+					"details": "Write tests for testing state",
+					"done": false
+				}
+			]
 		},
 		{
 			"uuid": "5bc1afe8-66f9-4d4e-a2ba-c6f349e5a827",
@@ -79,6 +100,69 @@
 		{
 			"uuid": "81e6d4f1-a1ce-4afb-be04-783ec74daa1b",
 			"title": "Rewrite player in c#",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": []
+		},
+		{
+			"uuid": "60088e11-0d5c-4971-b0a9-180ce352a4cf",
+			"title": "Debloat Player Controller.",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": [
+				{
+					"details": "add ui manager that can handle player state changes",
+					"done": false
+				},
+				{
+					"details": "create ui manager script",
+					"done": false
+				},
+				{
+					"details": "move ui logic to said ui manager",
+					"done": false
+				},
+				{
+					"details": "add pause menu logic to UI manager",
+					"done": false
+				}
+			]
+		},
+		{
+			"uuid": "1a5aa2a3-a871-4633-9fec-c98a23e93048",
+			"title": "Setup Game Feel for player",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": [
+				{
+					"details": "decide camera shake approach",
+					"done": false
+				},
+				{
+					"details": "research Post Processing",
+					"done": false
+				}
+			]
+		},
+		{
+			"uuid": "a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
+			"title": "Get Movement Dev menu setup (air control, air cap etc.)",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": [
+				{
+					"details": "Create Movement UI",
+					"done": false
+				},
+				{
+					"details": "Link to player/ State machine.",
+					"done": false
+				}
+			]
+		},
+		{
+			"uuid": "11b2a7a9-9a74-4353-b97c-f2a6aa97844e",
+			"title": "Move Camera Movement to Player Head",
 			"description": "",
 			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
 			"steps": []

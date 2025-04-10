@@ -544,6 +544,28 @@ vertical_alignment = 1
 layout_mode = 2
 theme = ExtResource("5_mjsm0")
 
+[node name="PlayerStateDebugUI" type="Control" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/PlayerStateDebugUI"]
+layout_mode = 0
+offset_right = 246.0
+offset_bottom = 196.0
+
+[node name="VSplitContainer" type="VSplitContainer" parent="UI/PlayerStateDebugUI/PanelContainer"]
+layout_mode = 2
+
+[node name="CurrentState" type="Label" parent="UI/PlayerStateDebugUI/PanelContainer/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "CurrentState : Test"
+
 [node name="Node3D" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.61037, 7.40295)
 script = ExtResource("7_jw32o")

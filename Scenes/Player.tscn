@@ -1,6 +1,7 @@
-[gd_scene load_steps=18 format=3 uid="uid://dveirswtux86l"]
+[gd_scene load_steps=19 format=3 uid="uid://dveirswtux86l"]
 
 [ext_resource type="Script" uid="uid://yxl02041i4vs" path="res://Scripts/Player.cs" id="1_bhhdu"]
+[ext_resource type="Script" uid="uid://dnckuybyxwpyl" path="res://Scripts/Head.cs" id="2_o3h8g"]
 [ext_resource type="Shader" uid="uid://msnke2wunvcm" path="res://psx_camera/psx_camera_shader.gdshader" id="2_vuwrv"]
 [ext_resource type="Script" uid="uid://40aohvg5a747" path="res://Scripts/weaponManager.gd" id="3_nc0eh"]
 [ext_resource type="Resource" uid="uid://cyfhdoge2ai3v" path="res://Resources/Guns/pistol.tres" id="4_dms61"]
@@ -52,6 +53,7 @@ shape = SubResource("CapsuleShape3D_j53ao")
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("2_o3h8g")
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
 
