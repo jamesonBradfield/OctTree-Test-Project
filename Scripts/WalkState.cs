@@ -11,7 +11,6 @@ public partial class WalkState : State
     float HeadbobFrequency = 2.4f;
     float HeadbobTime = 0.0f;
     Player player;
-    Vector3 WishDir = Vector3.Zero;
     Vector2 inputDir;
 
     public override void Enter()
@@ -26,25 +25,30 @@ public partial class WalkState : State
 
     public override void Update(float delta)
     {
-        inputDir = Input.GetVector("left", "right", "up", "down");
+        inputDir = Input.GetVector("left", "right", "up", "down").Normalized();
         if (inputDir == Vector2.Zero)
         {
-            fsm.TransitionTo("IdleState");
+            fsm.TransitionTo("Idle");
+        }
+
+        if (player.IsOnFloor() && (Input.IsActionJustPressed("jump") || (player.AutoBhop && Input.IsActionJustPressed("jump"))))
+        {
+            fsm.TransitionTo("Jumping");
         }
     }
 
     public override void PhysicsUpdate(float delta)
     {
         base.PhysicsUpdate(delta);
-        WishDir = player.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y);
+        player.WishDir = player.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y);
 
-        var CurrentSpeedInWishDir = player.Velocity.Dot(WishDir);
+        var CurrentSpeedInWishDir = player.Velocity.Dot(player.WishDir);
         var SpeedLeftTillCap = WalkSpeed - CurrentSpeedInWishDir;
         if (SpeedLeftTillCap > 0)
         {
             float AccelSpeed = (float)(GroundAccel * delta * WalkSpeed);
             AccelSpeed = Mathf.Min(AccelSpeed, SpeedLeftTillCap);
-            player.Velocity += AccelSpeed * WishDir;
+            player.Velocity += AccelSpeed * player.WishDir;
 
             var Control = Mathf.Max(player.Velocity.Length(), GroundDecel);
             var Drop = Control * GroundFriction * delta;
@@ -57,8 +61,6 @@ public partial class WalkState : State
 
             HeadbobEffect(delta);
         }
-
-        player.MoveAndSlide();
     }
 
     private void HeadbobEffect(double delta)
@@ -70,8 +72,5 @@ public partial class WalkState : State
         Mathf.Sin(HeadbobTime * HeadbobFrequency) * HeadbobAmplitude,
         0
     );
-        // might want to add a timer to keep this from playing again.
-        // if (!FootstepPlayer.Playing && Mathf.Sin(HeadbobTime * HeadbobFrequency) >= .98 || !FootstepPlayer.Playing && Mathf.Sin(HeadbobTime * HeadbobFrequency) <= -.98)
-        //     FootstepPlayer.Play();
     }
 }

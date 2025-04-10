@@ -1,0 +1,101 @@
+using Godot;
+
+public partial class UIManager : Control
+{
+
+    Control pause_menu_content;
+    Control options_menu_content;
+    Control movement_menu_content;
+    Slider mouse_sens_slider;
+    Slider controller_sens_slider;
+    Player player;
+    Head head;
+    StateMachine fsm;
+    Label stateLabel;
+    public override void _Ready()
+    {
+        stateLabel = GetNode<Label>("PlayerStateDebugUI/PanelContainer/VSplitContainer/CurrentState");
+        pause_menu_content = GetNode<Control>("PausePanel");
+        options_menu_content = GetNode<Control>("OptionsPanel");
+        movement_menu_content = GetNode<Control>("MovementPanel");
+        mouse_sens_slider = GetNode<Slider>("OptionsPanel/MarginContainer/OptionsContainer/MouseContainer/MouseSlider");
+        controller_sens_slider = GetNode<Slider>("OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer/ControllerSlider");
+        player = GetNode<Player>("/root/Main/Player");
+        head = player.GetNode<Head>("Head");
+        fsm = player.GetNode<StateMachine>("FSM");
+        stateLabel.Text = "CurrentState: " + fsm.CurrentState.ToString();
+    }
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        stateLabel.Text = "CurrentState: " + fsm.CurrentState.ToString();
+    }
+
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (@event is InputEventMouseButton)
+        {
+            Input.MouseMode = Input.MouseModeEnum.Captured;
+        }
+        else if (@event.IsActionPressed("pause"))
+        {
+            Input.MouseMode = Input.MouseModeEnum.Visible;
+            if (pause_menu_content.Visible)
+            {
+                pause_menu_content.Hide();
+                //show cursor
+            }
+            else if (!pause_menu_content.Visible && !options_menu_content.Visible)
+            {
+                pause_menu_content.Show();
+                //hide cursor
+            }
+            else if (!pause_menu_content.Visible && options_menu_content.Visible)
+            {
+                options_menu_content.Hide();
+                //show cursor
+                Input.MouseMode = Input.MouseModeEnum.Captured;
+            }
+            else if (!pause_menu_content.Visible && movement_menu_content.Visible)
+            {
+                movement_menu_content.Hide();
+                //show cursor
+                Input.MouseMode = Input.MouseModeEnum.Captured;
+            }
+        }
+    }
+    public void resume()
+    {
+        pause_menu_content.Hide();
+        //Show Cursor
+        Input.MouseMode = Input.MouseModeEnum.Captured;
+    }
+    public void quit()
+    {
+        GetTree().Quit();
+    }
+    public void ReturnToPauseMenu()
+    {
+        pause_menu_content.Show();
+        movement_menu_content.Hide();
+        options_menu_content.Hide();
+    }
+    public void OptionsPressed()
+    {
+        pause_menu_content.Hide();
+        options_menu_content.Show();
+        mouse_sens_slider.Value = head.Sensitivity;
+        controller_sens_slider.Value = head.ControllerSensitivity;
+    }
+    public void MovementPressed()
+    {
+        pause_menu_content.Hide();
+        movement_menu_content.Show();
+        mouse_sens_slider.Value = head.Sensitivity;
+        controller_sens_slider.Value = head.ControllerSensitivity;
+    }
+    public void Retry()
+    {
+        GetTree().ReloadCurrentScene();
+    }
+}

@@ -1,10 +1,10 @@
 extends Control
 
-@onready var pause_menu_content : Control = $/root/Main/UI/PausePanel
-@onready var options_menu_content : Control =$/root/Main/UI/OptionsPanel 
-@onready var movement_menu_content : Control =$/root/Main/UI/MovementPanel 
-@onready var mouse_sens_slider = $/root/Main/UI/OptionsPanel/MarginContainer/OptionsContainer/MouseContainer/MouseSlider
-@onready var controller_sens_slider = $/root/Main/UI/OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer/ControllerSlider
+@onready var pause_menu_content : Control = $PausePanel
+@onready var options_menu_content : Control =$OptionsPanel 
+@onready var movement_menu_content : Control =$MovementPanel 
+@onready var mouse_sens_slider = $OptionsPanel/MarginContainer/OptionsContainer/MouseContainer/MouseSlider
+@onready var controller_sens_slider = $OptionsPanel/MarginContainer/OptionsContainer/ControllerContainer/ControllerSlider
 
 func _unhandled_input(event):
     if event is InputEventMouseButton:

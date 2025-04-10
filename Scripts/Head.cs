@@ -2,8 +2,8 @@ using Godot;
 
 public partial class Head : Node3D
 {
-    float Sensitivity = .006f;
-    float ControllerSensitivity = .05f;
+    public float Sensitivity = .006f;
+    public float ControllerSensitivity = .05f;
     Vector2 CurrentControllerLook;
     public override void _Process(double delta)
     {

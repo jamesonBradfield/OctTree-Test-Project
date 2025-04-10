@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://bqy0hijh0piyl"]
+[gd_scene load_steps=21 format=3 uid="uid://bqy0hijh0piyl"]
 
 [ext_resource type="PackedScene" uid="uid://dveirswtux86l" path="res://Scenes/Player.tscn" id="2_ofovn"]
 [ext_resource type="Script" uid="uid://b6tbjchu68sdd" path="res://Scripts/director.gd" id="3_akill"]
@@ -6,10 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://bntsdi3pa3iuh" path="res://addons/kenney_prototype_textures/orange/texture_01.png" id="5_bmxlf"]
 [ext_resource type="Theme" uid="uid://cmg4p4iym15ny" path="res://Shaders/UI_Theme.tres" id="5_mjsm0"]
 [ext_resource type="Texture2D" uid="uid://1sr6in04puk2" path="res://addons/kenney_prototype_textures/dark/texture_01.png" id="5_pbw6q"]
-[ext_resource type="Script" uid="uid://vuqvvcdqpl0b" path="res://Scripts/PauseMenu.gd" id="5_v1gob"]
 [ext_resource type="Texture2D" uid="uid://qfp07mp0da6c" path="res://addons/kenney_prototype_textures/light/texture_01.png" id="6_4kpch"]
 [ext_resource type="Texture2D" uid="uid://cavge046wlig" path="res://addons/kenney_prototype_textures/green/texture_08.png" id="7_grg3l"]
-[ext_resource type="Script" uid="uid://b3sqpclf5ru0" path="res://Scripts/grenade.gd" id="7_jw32o"]
+[ext_resource type="Script" uid="uid://djs5654rrcgok" path="res://Scripts/UIManager.cs" id="8_bmxlf"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_njric"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -54,9 +53,6 @@ bg_color = Color(0.113725, 0.113725, 0.113725, 0.427451)
 [sub_resource type="LabelSettings" id="LabelSettings_jw32o"]
 font_size = 30
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_50glp"]
-radius = 7.168
-
 [node name="Main" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -72,13 +68,11 @@ spawnable_enemies_in_round = Array[PackedScene]([ExtResource("4_cfy4k")])
 enemy_point_array = Array[int]([1])
 round_at_points_relationship = SubResource("Curve_5efj3")
 
-[node name="Player" parent="." node_paths=PackedStringArray("VelocityIndicator", "HealthBar", "PausePanel", "DeathPanel") instance=ExtResource("2_ofovn")]
+[node name="Player" parent="." node_paths=PackedStringArray("UiManager", "HealthBar") instance=ExtResource("2_ofovn")]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13519, 0)
-VelocityIndicator = NodePath("../UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/VelocityIndicator")
+UiManager = NodePath("../UI")
 HealthBar = NodePath("../UI/PlayerViewUI/PanelContainer/MarginContainer/VBoxContainer/HealthBar")
-PausePanel = NodePath("../UI/PausePanel")
-DeathPanel = NodePath("../UI/YouDiedPanel")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0305815, 0, -0.499756)
@@ -130,7 +124,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("5_v1gob")
+script = ExtResource("8_bmxlf")
 
 [node name="PausePanel" type="PanelContainer" parent="UI"]
 visible = false
@@ -566,20 +560,9 @@ layout_mode = 2
 size_flags_vertical = 0
 text = "CurrentState : Test"
 
-[node name="Node3D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.61037, 7.40295)
-script = ExtResource("7_jw32o")
-
-[node name="Timer" type="Timer" parent="Node3D"]
-
-[node name="Area3D" type="Area3D" parent="Node3D"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Area3D"]
-shape = SubResource("SphereShape3D_50glp")
-
-[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Resume" to="UI" method="resume"]
-[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Options" to="UI" method="_on_options_pressed"]
-[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Movement" to="UI" method="_on_movement_pressed"]
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Resume" to="UI" method="Resume"]
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Options" to="UI" method="OptionsPressed"]
+[connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Movement" to="UI" method="MovementPressed"]
 [connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Quit" to="UI" method="quit"]
 [connection signal="pressed" from="UI/OptionsPanel/MarginContainer/HBoxContainer2/Return" to="UI" method="return_to_pause_menu"]
 [connection signal="pressed" from="UI/MovementPanel/MarginContainer/HBoxContainer2/Return" to="UI" method="return_to_pause_menu"]

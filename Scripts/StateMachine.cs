@@ -6,6 +6,9 @@ public partial class StateMachine : Node
     [Export] public NodePath initialState;
     private Dictionary<string, State> _states;
     private State _currentState;
+
+    public State CurrentState { get => _currentState; set => _currentState = value; }
+
     public override void _Ready()
     {
         _states = new Dictionary<string, State>();
@@ -26,7 +29,6 @@ public partial class StateMachine : Node
 
     public override void _Process(double delta)
     {
-        GD.Print("current state: " + _currentState.Name);
         _currentState.Update((float)delta);
     }
     public override void _PhysicsProcess(double delta)
@@ -40,6 +42,7 @@ public partial class StateMachine : Node
 
     public void TransitionTo(string key)
     {
+        GD.Print("Transitioning to : " + _currentState);
         if (!_states.ContainsKey(key) || _currentState == _states[key])
             return;
         _currentState.Exit();

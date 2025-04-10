@@ -11,16 +11,15 @@
 			"uuid": "12f26f30-131a-466b-8c19-adaa8c13ed5f",
 			"title": "Todo",
 			"tasks": [
-				"242658f4-10d4-4663-b525-e2580ae3ea02",
-				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
-				"1a5aa2a3-a871-4633-9fec-c98a23e93048"
+				"1a5aa2a3-a871-4633-9fec-c98a23e93048",
+				"f88e4a31-9bd6-44a4-a232-28d1bd121931"
 			]
 		},
 		{
 			"uuid": "9e5db075-f448-4d71-9fcb-c1611ea4e6d5",
 			"title": "Doing",
 			"tasks": [
-				"60088e11-0d5c-4971-b0a9-180ce352a4cf"
+				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a"
 			]
 		},
 		{
@@ -33,7 +32,9 @@
 				"b92c2747-93d2-4bf5-8988-aa484fab6a68",
 				"81e6d4f1-a1ce-4afb-be04-783ec74daa1b",
 				"5bc1afe8-66f9-4d4e-a2ba-c6f349e5a827",
-				"11b2a7a9-9a74-4353-b97c-f2a6aa97844e"
+				"11b2a7a9-9a74-4353-b97c-f2a6aa97844e",
+				"60088e11-0d5c-4971-b0a9-180ce352a4cf",
+				"242658f4-10d4-4663-b525-e2580ae3ea02"
 			]
 		}
 	],
@@ -78,15 +79,19 @@
 				},
 				{
 					"details": "Link to FSM",
-					"done": false
+					"done": true
 				},
 				{
 					"details": "Fix State Transitions",
-					"done": false
+					"done": true
 				},
 				{
-					"details": "Write tests for testing state",
-					"done": false
+					"details": "Find a Realiable way to get the player",
+					"done": true
+				},
+				{
+					"details": "InAir pauses on camera move 90 degrees",
+					"done": true
 				}
 			]
 		},
@@ -112,19 +117,19 @@
 			"steps": [
 				{
 					"details": "add ui manager that can handle player state changes",
-					"done": false
+					"done": true
 				},
 				{
 					"details": "create ui manager script",
-					"done": false
+					"done": true
 				},
 				{
 					"details": "move ui logic to said ui manager",
-					"done": false
+					"done": true
 				},
 				{
 					"details": "add pause menu logic to UI manager",
-					"done": false
+					"done": true
 				}
 			]
 		},
@@ -166,6 +171,18 @@
 			"description": "",
 			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
 			"steps": []
+		},
+		{
+			"uuid": "f88e4a31-9bd6-44a4-a232-28d1bd121931",
+			"title": "Remove control nodes on EndRoundUI/PlayerStateDebugUI",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": [
+				{
+					"details": "Redo UIManager NodePaths",
+					"done": false
+				}
+			]
 		}
 	],
 	"layout": {

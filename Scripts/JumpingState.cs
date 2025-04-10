@@ -1,4 +1,4 @@
-
+using Godot;
 public partial class JumpingState : State
 {
     Player player;
@@ -12,7 +12,6 @@ public partial class JumpingState : State
     public override void PhysicsUpdate(float delta)
     {
         base.PhysicsUpdate(delta);
-        player.MoveAndSlide();
     }
 
     public override void Exit()

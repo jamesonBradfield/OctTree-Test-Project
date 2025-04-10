@@ -52,18 +52,18 @@ func _ready():
 
 func _process(delta):
     if( current_round_state == round_state.SPAWNING):
-        print("Director is currently in state ", str(current_round_state))
+        # print("Director is currently in state ", str(current_round_state))
         spawn_enemies_in_round_with_points()
     elif( current_round_state == round_state.BEGIN):
-        print("Director is currently in state ", str(current_round_state))
+        # print("Director is currently in state ", str(current_round_state))
         enemies_to_pathfind_per_frame = enemies_in_round.size()/10.0
         current_round_state = round_state.FIGHT
     elif( current_round_state == round_state.FIGHT):
-        print("Director is currently in state ", str(current_round_state))
+        # print("Director is currently in state ", str(current_round_state))
         if(pathfind_timer.is_stopped()):
             pathfind_timer.start()
     elif( current_round_state == round_state.END):
-        print("Director is currently in state ", str(current_round_state))
+        # print("Director is currently in state ", str(current_round_state))
         end_round_ui.show()
 
 
