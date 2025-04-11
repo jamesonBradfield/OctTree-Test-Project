@@ -28,7 +28,7 @@ public partial class UIManager : Control
         fsm = player.GetNode<StateMachine>("FSM");
         stateText.Text = "CurrentState : " + fsm.CurrentState.ToString();
         wishDirText.Text = "WishDir : " + player.WishDir;
-        velocityText.Text = "Velocity : " + player.Velocity;
+        velocityText.Text = "Velocity : " + player.Velocity.Length();
     }
     public override void _Process(double delta)
     {

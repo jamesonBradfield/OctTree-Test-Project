@@ -386,11 +386,11 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13519, 0)
 UiManager = NodePath("../UI")
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0305815, 0, -0.499756)
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0617647, 0, -0.499756)
 material_override = SubResource("StandardMaterial3D_v1gob")
 use_collision = true
-size = Vector3(46.3256, 1, 30.3013)
+size = Vector3(13.4668, 1, 12.6201)
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
