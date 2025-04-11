@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cuu56sg5qm2r0"]
-
-[ext_resource type="Script" uid="uid://70giduqub25h" path="res://Scripts/quad_tree/QuadTree.gd" id="1_j3g03"]
-
-[node name="QuadTree" type="Node3D"]
-script = ExtResource("1_j3g03")

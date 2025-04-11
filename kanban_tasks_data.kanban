@@ -10,17 +10,12 @@
 		{
 			"uuid": "12f26f30-131a-466b-8c19-adaa8c13ed5f",
 			"title": "Todo",
-			"tasks": [
-				"1a5aa2a3-a871-4633-9fec-c98a23e93048",
-				"f88e4a31-9bd6-44a4-a232-28d1bd121931"
-			]
+			"tasks": []
 		},
 		{
 			"uuid": "9e5db075-f448-4d71-9fcb-c1611ea4e6d5",
 			"title": "Doing",
-			"tasks": [
-				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a"
-			]
+			"tasks": []
 		},
 		{
 			"uuid": "3178affe-656d-4b78-88cc-626caf2bae06",
@@ -34,7 +29,8 @@
 				"5bc1afe8-66f9-4d4e-a2ba-c6f349e5a827",
 				"11b2a7a9-9a74-4353-b97c-f2a6aa97844e",
 				"60088e11-0d5c-4971-b0a9-180ce352a4cf",
-				"242658f4-10d4-4663-b525-e2580ae3ea02"
+				"242658f4-10d4-4663-b525-e2580ae3ea02",
+				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a"
 			]
 		}
 	],
@@ -134,22 +130,6 @@
 			]
 		},
 		{
-			"uuid": "1a5aa2a3-a871-4633-9fec-c98a23e93048",
-			"title": "Setup Game Feel for player",
-			"description": "",
-			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
-			"steps": [
-				{
-					"details": "decide camera shake approach",
-					"done": false
-				},
-				{
-					"details": "research Post Processing",
-					"done": false
-				}
-			]
-		},
-		{
 			"uuid": "a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
 			"title": "Get Movement Dev menu setup (air control, air cap etc.)",
 			"description": "",
@@ -157,11 +137,19 @@
 			"steps": [
 				{
 					"details": "Create Movement UI",
-					"done": false
+					"done": true
 				},
 				{
 					"details": "Link to player/ State machine.",
+					"done": true
+				},
+				{
+					"details": "Add Ground Variables to movement UI",
 					"done": false
+				},
+				{
+					"details": "Link State to UI",
+					"done": true
 				}
 			]
 		},

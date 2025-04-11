@@ -4,10 +4,7 @@ public partial class Player : CharacterBody3D
 {
     [Export] Node3D Head;
     [Export] public Camera3D Camera;
-    [Export] Damageable Damageable;
     [Export] UIManager UiManager;
-    [Export] AudioStreamPlayer3D BhopPlayer;
-    [Export] AudioStreamPlayer3D FootstepPlayer;
     float StartingFov;
     float MovingFastFov = 80f;
     float JumpVelocity = 6.0f;
@@ -24,7 +21,6 @@ public partial class Player : CharacterBody3D
 
     // ground movement settings
     float WalkSpeed = 8.5f;
-    float SprintSpeed = 8.5f;
     float GroundAccel = 14.0f;
     float GroundDecel = 10f;
     float GroundFriction = 6.0f;
@@ -32,8 +28,8 @@ public partial class Player : CharacterBody3D
     [Export] public ProgressBar HealthBar;
     public override void _Ready()
     {
-        HealthBar.MaxValue = Damageable.CurrentHealth;
-        HealthBar.Value = Damageable.CurrentHealth;
+        // HealthBar.MaxValue = Damageable.CurrentHealth;
+        // HealthBar.Value = Damageable.CurrentHealth;
         StartingFov = Camera.Fov;
     }
     public override void _PhysicsProcess(double delta)

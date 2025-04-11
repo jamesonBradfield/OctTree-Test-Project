@@ -2,7 +2,6 @@ using Godot;
 
 public partial class UIManager : Control
 {
-
     Control pause_menu_content;
     Control options_menu_content;
     Control movement_menu_content;
@@ -11,10 +10,14 @@ public partial class UIManager : Control
     Player player;
     Head head;
     StateMachine fsm;
-    Label stateLabel;
+    Label stateText;
+    Label wishDirText;
+    Label velocityText;
     public override void _Ready()
     {
-        stateLabel = GetNode<Label>("PlayerStateDebugUI/PanelContainer/VSplitContainer/CurrentState");
+        stateText = GetNode<Label>("MovementDebug/PanelContainer/MarginContainer/VBoxContainer/StatePanelContainer/MarginContainer/VBoxContainer/CurrentState");
+        wishDirText = GetNode<Label>("MovementDebug/PanelContainer/MarginContainer/VBoxContainer/StatePanelContainer/MarginContainer/VBoxContainer/WishDir");
+        velocityText = GetNode<Label>("MovementDebug/PanelContainer/MarginContainer/VBoxContainer/StatePanelContainer/MarginContainer/VBoxContainer/Velocity");
         pause_menu_content = GetNode<Control>("PausePanel");
         options_menu_content = GetNode<Control>("OptionsPanel");
         movement_menu_content = GetNode<Control>("MovementPanel");
@@ -23,12 +26,16 @@ public partial class UIManager : Control
         player = GetNode<Player>("/root/Main/Player");
         head = player.GetNode<Head>("Head");
         fsm = player.GetNode<StateMachine>("FSM");
-        stateLabel.Text = "CurrentState: " + fsm.CurrentState.ToString();
+        stateText.Text = "CurrentState : " + fsm.CurrentState.ToString();
+        wishDirText.Text = "WishDir : " + player.WishDir;
+        velocityText.Text = "Velocity : " + player.Velocity;
     }
     public override void _Process(double delta)
     {
         base._Process(delta);
-        stateLabel.Text = "CurrentState: " + fsm.CurrentState.ToString();
+        stateText.Text = "CurrentState : " + fsm.CurrentState.ToString();
+        wishDirText.Text = "WishDir : " + player.WishDir;
+        velocityText.Text = "Velocity : " + player.Velocity;
     }
 
     public override void _UnhandledInput(InputEvent @event)
