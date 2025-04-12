@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://w4x5y1uvgmyn"]
+
+[ext_resource type="Script" uid="uid://py86tmrsnrwa" path="res://Scripts/BoidTestSceneSetup.cs" id="1_j8u8n"]
+
+[sub_resource type="Environment" id="Environment_j8u8n"]
+glow_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_ae2d1"]
+
+[node name="OctTreeTest" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 61, 0, 0)
+environment = SubResource("Environment_j8u8n")
+current = true
+
+[node name="OctTreeSetup" type="Node3D" parent="."]
+script = ExtResource("1_j8u8n")
+bounds = Vector3(50, 50, 50)
+mesh = SubResource("BoxMesh_ae2d1")

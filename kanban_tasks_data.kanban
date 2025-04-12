@@ -10,12 +10,17 @@
 		{
 			"uuid": "12f26f30-131a-466b-8c19-adaa8c13ed5f",
 			"title": "Todo",
-			"tasks": []
+			"tasks": [
+				"3e9c5b14-33ec-4e14-9a93-dbf8c0784f45",
+				"d09c541e-5c4d-499b-a931-d74b7636f372"
+			]
 		},
 		{
 			"uuid": "9e5db075-f448-4d71-9fcb-c1611ea4e6d5",
 			"title": "Doing",
-			"tasks": []
+			"tasks": [
+				"c2cb1734-1033-4ca4-a4b3-d88afd1a6272"
+			]
 		},
 		{
 			"uuid": "3178affe-656d-4b78-88cc-626caf2bae06",
@@ -30,7 +35,8 @@
 				"11b2a7a9-9a74-4353-b97c-f2a6aa97844e",
 				"60088e11-0d5c-4971-b0a9-180ce352a4cf",
 				"242658f4-10d4-4663-b525-e2580ae3ea02",
-				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a"
+				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
+				"8a851ec5-8d25-4c44-8406-acff3ce5dc4f"
 			]
 		}
 	],
@@ -171,6 +177,68 @@
 					"done": false
 				}
 			]
+		},
+		{
+			"uuid": "8a851ec5-8d25-4c44-8406-acff3ce5dc4f",
+			"title": "Effect System for Accel/Decel",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": []
+		},
+		{
+			"uuid": "c2cb1734-1033-4ca4-a4b3-d88afd1a6272",
+			"title": "Enemy boids AI.",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": [
+				{
+					"details": "Separation",
+					"done": true
+				},
+				{
+					"details": "Alignment",
+					"done": true
+				},
+				{
+					"details": "Cohesion",
+					"done": true
+				},
+				{
+					"details": "leader rule",
+					"done": false
+				},
+				{
+					"details": "distance from player update rate optimization",
+					"done": false
+				}
+			]
+		},
+		{
+			"uuid": "3e9c5b14-33ec-4e14-9a93-dbf8c0784f45",
+			"title": "more forgiving manual jump system",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": [
+				{
+					"details": "Coyote Time",
+					"done": false
+				},
+				{
+					"details": "letting player jump if close enough to a floor but not on it",
+					"done": false
+				},
+				{
+					"details": "downward raycast for earlier IsOnFloor detection",
+					"done": false
+				}
+			]
+		},
+		{
+			"uuid": "d09c541e-5c4d-499b-a931-d74b7636f372",
+			"title": "Basic OctTree Implementation",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": []
 		}
 	],
 	"layout": {

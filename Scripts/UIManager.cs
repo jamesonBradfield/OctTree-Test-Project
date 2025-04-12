@@ -35,7 +35,7 @@ public partial class UIManager : Control
         base._Process(delta);
         stateText.Text = "CurrentState : " + fsm.CurrentState.ToString();
         wishDirText.Text = "WishDir : " + player.WishDir;
-        velocityText.Text = "Velocity : " + player.Velocity;
+        velocityText.Text = "Velocity : " + player.Velocity.Length();
     }
 
     public override void _UnhandledInput(InputEvent @event)
