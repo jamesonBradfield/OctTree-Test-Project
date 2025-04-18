@@ -21,12 +21,14 @@ public partial class InAirState : State
     {
         player = fsm.GetParent<Player>();
         landPlayer = player.GetNode<AudioStreamPlayer3D>("LandPlayer");
+        player.GetNode<Node>("CameraShake3DNode").Call("_init_camera_shake");
     }
 
     public override void Exit()
     {
         landPlayer.PitchScale = (float)GD.RandRange(0.9, 1.1);
         landPlayer.Play();
+        player.GetNode<Node>("CameraShake3DNode").Call("_shake");
     }
 
     public override void Update(float delta)

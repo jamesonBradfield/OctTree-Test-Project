@@ -1,11 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://w4x5y1uvgmyn"]
+[gd_scene load_steps=6 format=3 uid="uid://w4x5y1uvgmyn"]
 
-[ext_resource type="Script" uid="uid://py86tmrsnrwa" path="res://Scripts/BoidTestSceneSetup.cs" id="1_j8u8n"]
+[ext_resource type="Script" uid="uid://cm44k8uf7ydqi" path="res://Scripts/SimpleCameraController.cs" id="1_7sd50"]
+[ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
 
 [sub_resource type="Environment" id="Environment_j8u8n"]
 glow_enabled = true
 
-[sub_resource type="BoxMesh" id="BoxMesh_ae2d1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j8u8n"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_j8u8n"]
+material = SubResource("StandardMaterial3D_j8u8n")
 
 [node name="OctTreeTest" type="Node3D"]
 
@@ -13,8 +18,8 @@ glow_enabled = true
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 61, 0, 0)
 environment = SubResource("Environment_j8u8n")
 current = true
+script = ExtResource("1_7sd50")
 
 [node name="OctTreeSetup" type="Node3D" parent="."]
 script = ExtResource("1_j8u8n")
-bounds = Vector3(50, 50, 50)
-mesh = SubResource("BoxMesh_ae2d1")
+mesh = SubResource("SphereMesh_j8u8n")

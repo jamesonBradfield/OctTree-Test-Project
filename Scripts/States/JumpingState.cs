@@ -7,6 +7,8 @@ public partial class JumpingState : State
     {
         player = fsm.GetParent<Player>();
         player.Velocity = new(player.Velocity.X, JumpVelocity, player.Velocity.Z);
+        // player.GetNode<AudioStreamPlayer3D>("FootstepPlayer").PitchScale = (float)GD.RandRange(0.90, 1.10);
+        // player.GetNode<AudioStreamPlayer3D>("FootstepPlayer").Play();
         fsm.TransitionTo("InAir");
     }
     public override void PhysicsUpdate(float delta)

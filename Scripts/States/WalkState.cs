@@ -27,14 +27,9 @@ public partial class WalkState : State
     {
         inputDir = Input.GetVector("left", "right", "up", "down").Normalized();
         if (inputDir == Vector2.Zero)
-        {
             fsm.TransitionTo("Idle");
-        }
-
         if (player.IsOnFloor() && (Input.IsActionJustPressed("jump") || (player.AutoBhop && Input.IsActionJustPressed("jump"))))
-        {
             fsm.TransitionTo("Jumping");
-        }
     }
 
     public override void PhysicsUpdate(float delta)
@@ -54,9 +49,7 @@ public partial class WalkState : State
             var Drop = Control * GroundFriction * delta;
             var new_speed = Mathf.Max(player.Velocity.Length() - Drop, 0.0);
             if (player.Velocity.Length() > 0)
-            {
                 new_speed /= player.Velocity.Length();
-            }
             player.Velocity *= (float)new_speed;
 
             HeadbobEffect(delta);

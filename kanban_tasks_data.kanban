@@ -12,7 +12,8 @@
 			"title": "Todo",
 			"tasks": [
 				"3e9c5b14-33ec-4e14-9a93-dbf8c0784f45",
-				"d09c541e-5c4d-499b-a931-d74b7636f372"
+				"d09c541e-5c4d-499b-a931-d74b7636f372",
+				"cacfdc84-0c51-4725-9df6-4afa0618c5c4"
 			]
 		},
 		{
@@ -236,6 +237,13 @@
 		{
 			"uuid": "d09c541e-5c4d-499b-a931-d74b7636f372",
 			"title": "Basic OctTree Implementation",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": []
+		},
+		{
+			"uuid": "cacfdc84-0c51-4725-9df6-4afa0618c5c4",
+			"title": "Fix Player Head Clamping",
 			"description": "",
 			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
 			"steps": []

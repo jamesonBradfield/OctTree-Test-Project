@@ -1,9 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://dveirswtux86l"]
+[gd_scene load_steps=13 format=3 uid="uid://dveirswtux86l"]
 
 [ext_resource type="Script" uid="uid://yxl02041i4vs" path="res://Scripts/Player.cs" id="1_bhhdu"]
 [ext_resource type="Script" uid="uid://dnckuybyxwpyl" path="res://Scripts/Head.cs" id="2_o3h8g"]
-[ext_resource type="Script" uid="uid://cad3p4ikeidpu" path="res://Scripts/Damageable.cs" id="8_megsn"]
+[ext_resource type="AudioStream" uid="uid://gum0cndvhxb8" path="res://step.wav" id="9_megsn"]
 [ext_resource type="Script" uid="uid://cjhdyjimy8q0q" path="res://Scripts/States/StateMachine.cs" id="9_miouo"]
+[ext_resource type="Script" uid="uid://m51u84pgvnkr" path="res://addons/CameraShake3D/CameraShake3D/CameraShake3DNode.gd" id="10_ksbbd"]
 [ext_resource type="Script" uid="uid://bfe46220a1gds" path="res://Scripts/States/WalkState.cs" id="10_o3h8g"]
 [ext_resource type="AudioStream" uid="uid://dv557s1sbrsei" path="res://Sfx/667298__pekena_larva__voc_male_land_04.wav" id="10_yoq75"]
 [ext_resource type="Script" uid="uid://doecb4bcd70m0" path="res://Scripts/States/JumpingState.cs" id="11_1e7my"]
@@ -38,11 +39,6 @@ collision_mask = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_gjl25")
 
-[node name="Damageable" type="Node" parent="."]
-script = ExtResource("8_megsn")
-MaxHealth = null
-CurrentHealth = 100
-
 [node name="FSM" type="Node" parent="."]
 script = ExtResource("9_miouo")
 initialState = NodePath("Idle")
@@ -69,3 +65,13 @@ stream = ExtResource("10_yoq75")
 [node name="Unarmed" type="Node" parent="GunFsm"]
 
 [node name="Powerups" type="Node" parent="."]
+
+[node name="FootStepPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("9_megsn")
+
+[node name="CameraShake3DNode" type="Node" parent="." node_paths=PackedStringArray("camera")]
+script = ExtResource("10_ksbbd")
+camera = NodePath("../Head/Camera3D")
+decay = 2.0
+magnitude = 0.1
+metadata/_custom_type_script = "uid://m51u84pgvnkr"

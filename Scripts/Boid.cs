@@ -5,36 +5,38 @@ public partial class Boid : Node3D
 {
     Vector3 Velocity;
     Vector3 Acceleration;
-    Vector3 bounds;
+    Vector3 Size;
     float AlignmentRange = 10;
     float CohesionRange = 7.5f;
     float SeparationRange = 2.5f;
     float MaxForce = .2f;
     float MaxSpeed = .8f;
 
-    public Boid(Vector3 bounds, Mesh providedMesh)
+    public Boid(Vector3 Size, Mesh providedMesh)
     {
         MeshInstance3D mesh = new MeshInstance3D();
         Velocity = new Vector3((float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5)).Normalized() * MaxSpeed;
         mesh.Mesh = providedMesh;
         AddChild(mesh);
-        this.bounds = bounds;
+        this.Size = Size;
     }
-    public void Edges()
-    {
-        if (Position.X > bounds.X)
-            Position = new(-bounds.X, Position.Y, Position.Z);
-        else if (Position.X < -bounds.X)
-            Position = new(bounds.X, Position.Y, Position.Z);
-        if (Position.Y > bounds.Y)
-            Position = new(Position.X, -bounds.Y, Position.Z);
-        else if (Position.Y < -bounds.Y)
-            Position = new(Position.X, bounds.Y, Position.Z);
-        if (Position.Z > bounds.Z)
-            Position = new(Position.X, Position.Y, -bounds.Z);
-        else if (Position.Z < -bounds.Z)
-            Position = new(Position.X, Position.Y, bounds.Z);
-    }
+    // NOTE: needs rework
+    //
+    // public void Edges()
+    // {
+    //     if (Position.X > Size.Position.X + (Size.Size.X / 2))
+    //         Position = new(Size.Position.X - (Size.Size.X / 2), Position.Y, Position.Z);
+    //     else if (Position.X < Size.Position.X - (Size.Size.X / 2))
+    //         Position = new(Size.Position.X + (Size.Size.X / 2), Position.Y, Position.Z);
+    //     if (Position.Y > Size.Position.Y + (Size.Size.Y / 2))
+    //         Position = new(Position.X, Size.Position.Y - (Size.Size.Y / 2), Position.Z);
+    //     else if (Position.Y < Size.Position.Y - (Size.Size.Y / 2))
+    //         Position = new(Position.X, Size.Position.Y + (Size.Size.Y / 2), Position.Z);
+    //     if (Position.Z > Size.Position.Z + (Size.Size.Y / 2))
+    //         Position = new(Position.X, Position.Y, Size.Position.Z - (Size.Size.Y / 2));
+    //     else if (Position.Z < -Size.Position.Z - (Size.Size.Y / 2))
+    //         Position = new(Position.X, Position.Y, Size.Position.Z + (Size.Size.Y / 2));
+    // }
     public void Update(double delta)
     {
         Position += Velocity;
