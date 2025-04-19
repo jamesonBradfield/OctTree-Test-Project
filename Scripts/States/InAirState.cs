@@ -47,7 +47,7 @@ public partial class InAirState : State
     public override void PhysicsUpdate(float delta)
     {
         base.PhysicsUpdate(delta);
-        inputDir = Input.GetVector("left", "right", "up", "down").Normalized();
+        inputDir = Input.GetVector("left", "right", "forward", "backward").Normalized();
         player.WishDir = player.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y);
         player.Velocity -= (new Vector3(0f, 12.0f, 0f) * delta);
         var CurrentSpeedInWishDirection = player.Velocity.Dot(player.WishDir);

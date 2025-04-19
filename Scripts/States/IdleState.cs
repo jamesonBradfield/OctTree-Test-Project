@@ -24,7 +24,7 @@ public partial class IdleState : State
 
     public override void Update(float delta)
     {
-        inputDir = Input.GetVector("left", "right", "up", "down").Normalized();
+        inputDir = Input.GetVector("left", "right", "forward", "backward").Normalized();
         if (inputDir != Vector2.Zero)
             fsm.TransitionTo("Walk");
         if (!player.IsOnFloor())

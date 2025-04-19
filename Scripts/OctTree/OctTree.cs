@@ -4,7 +4,6 @@ public partial class OctTree : Node3D
 {
     Vector3 Size;
     List<Boid> boids = new List<Boid>();
-    OctTree ufl, ufr, ubl, ubr, dfl, dfr, dbl, dbr;
     int Capacity;
     bool divided;
 
@@ -13,12 +12,9 @@ public partial class OctTree : Node3D
         this.Position = Position;
         this.Size = Size;
         this.Capacity = Capacity;
-        MeshInstance3D meshInstance = new();
-        BoxMesh boxMesh = new BoxMesh();
-        boxMesh.Size = Size;
-        meshInstance.Mesh = boxMesh;
-        AddChild(meshInstance);
+        this.Name = "OctTree";
         this.Position = Position;
+        GD.Print(Name + "Position : " + Position + "Size : " + Size);
     }
 
     public void Insert(Boid boid)
@@ -41,27 +37,29 @@ public partial class OctTree : Node3D
             dbr.Insert(boid);
         }
     }
+    public override void _Process(double delta)
+    {
+        DebugDraw3D.DrawBox(Position, Quaternion.Identity, Size);
+    }
 
     public void Subdivide()
     {
-        Vector3 newPos = Position;
-        Vector3 newSize = Size / 2f;
-        Vector3 uflPos = new(newPos.X + newSize.X, newPos.Y + newSize.Y, newPos.Z + newSize.Z);
-        Vector3 ufrPos = new(newPos.X - newSize.X, newPos.Y + newSize.Y, newPos.Z + newSize.Z);
-        Vector3 ublPos = new(newPos.X + newSize.X, newPos.Y + newSize.Y, newPos.Z - newSize.Z);
-        Vector3 ubrPos = new(newPos.X - newSize.X, newPos.Y + newSize.Y, newPos.Z - newSize.Z);
-        Vector3 dflPos = new(newPos.X + newSize.X, newPos.Y - newSize.Y, newPos.Z + newSize.Z);
-        Vector3 dfrPos = new(newPos.X - newSize.X, newPos.Y - newSize.Y, newPos.Z + newSize.Z);
-        Vector3 dblPos = new(newPos.X + newSize.X, newPos.Y - newSize.Y, newPos.Z - newSize.Z);
-        Vector3 dbrPos = new(newPos.X - newSize.X, newPos.Y - newSize.Y, newPos.Z - newSize.Z);
-        ufl = new(uflPos, newSize, Capacity);
-        ufr = new(ufrPos, newSize, Capacity);
-        ubl = new(ublPos, newSize, Capacity);
-        ubr = new(ubrPos, newSize, Capacity);
-        dfl = new(dflPos, newSize, Capacity);
-        dfr = new(dfrPos, newSize, Capacity);
-        dbl = new(dblPos, newSize, Capacity);
-        dbr = new(dbrPos, newSize, Capacity);
+        Vector3 uflPos = new(Size.X, Size.Y, Size.Z);
+        Vector3 ufrPos = new(-Size.X, Size.Y, Size.Z);
+        Vector3 ublPos = new(Size.X, Size.Y, -Size.Z);
+        Vector3 ubrPos = new(-Size.X, Size.Y, -Size.Z);
+        Vector3 dflPos = new(Size.X, -Size.Y, Size.Z);
+        Vector3 dfrPos = new(-Size.X, -Size.Y, Size.Z);
+        Vector3 dblPos = new(Size.X, -Size.Y, -Size.Z);
+        Vector3 dbrPos = new(-Size.X, -Size.Y, -Size.Z);
+        ufl = new(uflPos, Size, Capacity);
+        ufr = new(ufrPos, Size, Capacity);
+        ubl = new(ublPos, Size, Capacity);
+        ubr = new(ubrPos, Size, Capacity);
+        dfl = new(dflPos, Size, Capacity);
+        dfr = new(dfrPos, Size, Capacity);
+        dbl = new(dblPos, Size, Capacity);
+        dbr = new(dbrPos, Size, Capacity);
         AddChild(ufl);
         AddChild(ufr);
         AddChild(ubl);

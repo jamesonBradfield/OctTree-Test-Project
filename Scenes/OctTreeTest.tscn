@@ -1,25 +1,26 @@
-[gd_scene load_steps=6 format=3 uid="uid://w4x5y1uvgmyn"]
+[gd_scene load_steps=4 format=3 uid="uid://w4x5y1uvgmyn"]
 
-[ext_resource type="Script" uid="uid://cm44k8uf7ydqi" path="res://Scripts/SimpleCameraController.cs" id="1_7sd50"]
-[ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
+[ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTree/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
+[ext_resource type="Script" uid="uid://byx1pb36p1cxj" path="res://addons/Free fly camera/Src/free_fly_startup.gd" id="2_7sd50"]
 
-[sub_resource type="Environment" id="Environment_j8u8n"]
-glow_enabled = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j8u8n"]
-albedo_color = Color(0, 0, 0, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_j8u8n"]
-material = SubResource("StandardMaterial3D_j8u8n")
+[sub_resource type="BoxShape3D" id="BoxShape3D_g8jbb"]
 
 [node name="OctTreeTest" type="Node3D"]
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 61, 0, 0)
-environment = SubResource("Environment_j8u8n")
-current = true
-script = ExtResource("1_7sd50")
-
 [node name="OctTreeSetup" type="Node3D" parent="."]
 script = ExtResource("1_j8u8n")
-mesh = SubResource("SphereMesh_j8u8n")
+
+[node name="Free fly camera" type="CharacterBody3D" parent="."]
+script = ExtResource("2_7sd50")
+movement_speed = 50.0
+KEY_FORWARD = "forward"
+KEY_BACKWARD = "backward"
+KEY_LEFT = "left"
+KEY_RIGHT = "right"
+KEY_UP = "up"
+KEY_DOWN = "down"
+KEY_ESCAPE = "pause"
+metadata/_custom_type_script = "uid://byx1pb36p1cxj"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Free fly camera"]
+shape = SubResource("BoxShape3D_g8jbb")

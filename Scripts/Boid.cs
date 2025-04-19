@@ -12,13 +12,17 @@ public partial class Boid : Node3D
     float MaxForce = .2f;
     float MaxSpeed = .8f;
 
-    public Boid(Vector3 Size, Mesh providedMesh)
+    public Boid(Vector3 Size)
     {
         MeshInstance3D mesh = new MeshInstance3D();
         Velocity = new Vector3((float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5)).Normalized() * MaxSpeed;
-        mesh.Mesh = providedMesh;
         AddChild(mesh);
-        this.Size = Size;
+    }
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        DebugDraw3D.DrawSphere(Position, Size.X / 2f);
     }
     // NOTE: needs rework
     //

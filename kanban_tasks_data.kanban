@@ -12,8 +12,7 @@
 			"title": "Todo",
 			"tasks": [
 				"3e9c5b14-33ec-4e14-9a93-dbf8c0784f45",
-				"d09c541e-5c4d-499b-a931-d74b7636f372",
-				"cacfdc84-0c51-4725-9df6-4afa0618c5c4"
+				"d09c541e-5c4d-499b-a931-d74b7636f372"
 			]
 		},
 		{
@@ -37,7 +36,8 @@
 				"60088e11-0d5c-4971-b0a9-180ce352a4cf",
 				"242658f4-10d4-4663-b525-e2580ae3ea02",
 				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
-				"8a851ec5-8d25-4c44-8406-acff3ce5dc4f"
+				"8a851ec5-8d25-4c44-8406-acff3ce5dc4f",
+				"cacfdc84-0c51-4725-9df6-4afa0618c5c4"
 			]
 		}
 	],
@@ -239,7 +239,12 @@
 			"title": "Basic OctTree Implementation",
 			"description": "",
 			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
-			"steps": []
+			"steps": [
+				{
+					"details": "Debug OctTree Splitting causing space between sub-octTrees",
+					"done": false
+				}
+			]
 		},
 		{
 			"uuid": "cacfdc84-0c51-4725-9df6-4afa0618c5c4",
