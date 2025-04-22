@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://dxbmh0hyoylgl"]
+
+[ext_resource type="Shader" uid="uid://d21bh63f20hht" path="res://FancyNumberCounter.gdshader" id="1_8cs36"]
+[ext_resource type="Texture2D" uid="uid://b10u13b6wcea1" path="res://FancyNumbers.png" id="2_7g1pe"]
+
+[resource]
+shader = ExtResource("1_8cs36")
+shader_parameter/text1 = ExtResource("2_7g1pe")
+shader_parameter/num = 0.0
+shader_parameter/motion_blur = 0.0

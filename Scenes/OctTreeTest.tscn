@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://w4x5y1uvgmyn"]
+[gd_scene load_steps=5 format=3 uid="uid://w4x5y1uvgmyn"]
 
 [ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTree/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
 [ext_resource type="Script" uid="uid://byx1pb36p1cxj" path="res://addons/Free fly camera/Src/free_fly_startup.gd" id="2_7sd50"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7sd50"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g8jbb"]
 
@@ -9,6 +11,18 @@
 
 [node name="OctTreeSetup" type="Node3D" parent="."]
 script = ExtResource("1_j8u8n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="OctTreeSetup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 0)
+mesh = SubResource("BoxMesh_7sd50")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="OctTreeSetup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 100)
+mesh = SubResource("BoxMesh_7sd50")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="OctTreeSetup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
+mesh = SubResource("BoxMesh_7sd50")
 
 [node name="Free fly camera" type="CharacterBody3D" parent="."]
 script = ExtResource("2_7sd50")

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites id="2025-04-22" name="report_5" tests="3" failures="0" time="0.320">
+	<testsuite id="0" name="OctTreeTest" package="test" timestamp="2025-04-22T11:21:46" hostname="localhost" tests="3" failures="0" errors="0" skipped="0" time="0.320">
+		<testcase name="Test_Insert_single_element_at_edges" classname="OctTreeTest" time="0.188">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(99, 99, 99, 1, 1, 1)" classname="OctTreeTest" time="0.017">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(0, 0, 0, 1, 1, 1)" classname="OctTreeTest" time="0.009">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(0, 99, 0, 1, 1, 1)" classname="OctTreeTest" time="0.012">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(99, 0, 0, 1, 1, 1)" classname="OctTreeTest" time="0.042">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(99, 99, 0, 1, 1, 1)" classname="OctTreeTest" time="0.049">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(0, 99, 99, 1, 1, 1)" classname="OctTreeTest" time="0.049">
+		</testcase>
+		<testcase name="Test__Process" classname="OctTreeTest" time="0.066">
+		</testcase>
+		<testcase name="Test_Log" classname="OctTreeTest" time="0.015">
+		</testcase>
+	</testsuite>
+</testsuites>

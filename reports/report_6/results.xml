@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites id="2025-04-22" name="report_6" tests="4" failures="2" time="0.317">
+	<testsuite id="0" name="OctTreeTest" package="test" timestamp="2025-04-22T12:40:30" hostname="localhost" tests="4" failures="2" errors="0" skipped="0" time="0.317">
+		<testcase name="Test_Insert_single_element_at_edges" classname="OctTreeTest" time="0.154">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(99, 99, 99, 1, 1, 1)" classname="OctTreeTest" time="0.020">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(0, 0, 0, 1, 1, 1)" classname="OctTreeTest" time="0.007">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(0, 99, 0, 1, 1, 1)" classname="OctTreeTest" time="0.020">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(99, 0, 0, 1, 1, 1)" classname="OctTreeTest" time="0.032">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(99, 99, 0, 1, 1, 1)" classname="OctTreeTest" time="0.032">
+		</testcase>
+		<testcase name="Test_Insert_single_element_at_edges(0, 99, 99, 1, 1, 1)" classname="OctTreeTest" time="0.032">
+		</testcase>
+		<testcase name="Test_Insert_split" classname="OctTreeTest" time="0.047">
+			<failure message="FAILED: test/OctTree_test.cs:62" type="FAILURE">
+<![CDATA[
+Expecting be NOT <Null>:
+]]>
+			</failure>
+		</testcase>
+		<testcase name="Test__Process" classname="OctTreeTest" time="0.057">
+			<failure message="FAILED: test/OctTree_test.cs:74" type="FAILURE">
+<![CDATA[
+Cannot access a disposed object.
+Object name: 'OctTree'.
+]]>
+			</failure>
+		</testcase>
+		<testcase name="Test_Log" classname="OctTreeTest" time="0.002">
+		</testcase>
+	</testsuite>
+</testsuites>

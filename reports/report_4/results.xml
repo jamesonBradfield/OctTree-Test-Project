@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites id="2025-04-22" name="report_4" tests="3" failures="4" time="0.089">
+	<testsuite id="0" name="OctTreeTest" package="test" timestamp="2025-04-22T11:19:33" hostname="localhost" tests="3" failures="4" errors="0" skipped="0" time="0.089">
+		<testcase name="Test_Insert" classname="OctTreeTest" time="0.019">
+			<failure message="FAILED: test/OctTree_test.cs:30" type="FAILURE">
+<![CDATA[
+Expecting be NOT <Null>:
+]]>
+			</failure>
+		</testcase>
+		<testcase name="Test__Process" classname="OctTreeTest" time="0.002">
+			<failure message="FAILED: test/OctTree_test.cs:43" type="FAILURE">
+<![CDATA[
+Expecting be NOT <Null>:
+]]>
+			</failure>
+		</testcase>
+		<testcase name="Test_Log" classname="OctTreeTest" time="0.008">
+			<failure message="FAILED: test/OctTree_test.cs:56" type="FAILURE">
+<![CDATA[
+Expecting be NOT <Null>:
+]]>
+			</failure>
+		</testcase>
+	</testsuite>
+</testsuites>
