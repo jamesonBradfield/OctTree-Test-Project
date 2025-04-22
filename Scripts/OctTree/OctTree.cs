@@ -6,6 +6,7 @@ public partial class OctTree : Node3D
     public LinkedList<Aabb> elements = new LinkedList<Aabb>();
     public LinkedList<OctNode> nodes = new LinkedList<OctNode>();
     int MaxCapacity;
+    bool debug = false;
 
     public OctTree(Aabb RootAabb, int MaxCapacity)
     {
@@ -261,7 +262,36 @@ public partial class OctTree : Node3D
             }
         }
     }
+    public void Regenerate()
+    {
+        Log("Regenerating OctTree");
 
+        // Save reference to the root bounds
+        Aabb rootBounds = nodes.First.Value.bounds;
+
+        // Store all elements before clearing the tree
+        List<Aabb> allElements = new List<Aabb>();
+        foreach (Aabb element in elements)
+        {
+            allElements.Add(element);
+        }
+
+        // Clear existing nodes and elements
+        nodes.Clear();
+        elements.Clear();
+
+        // Recreate the root node
+        nodes.AddFirst(new OctNode(rootBounds, 0));
+
+        // Reinsert all elements
+        Log($"Reinserting {allElements.Count} elements into regenerated tree");
+        foreach (Aabb element in allElements)
+        {
+            Insert(element);
+        }
+
+        Log($"OctTree regenerated with {nodes.Count} nodes and {elements.Count} elements");
+    }
     public override void _Process(double delta)
     {
         foreach (OctNode node in nodes)
@@ -273,6 +303,8 @@ public partial class OctTree : Node3D
 
     public void Log(string log_message)
     {
+        if (!debug)
+            return;
         GD.Print("[OctTree] " + log_message);
     }
 }

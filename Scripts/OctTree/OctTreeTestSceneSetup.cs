@@ -8,13 +8,13 @@ public partial class OctTreeTestSceneSetup : Node3D
     List<Boid> boids = new List<Boid>();
     OctTree ot;
     private float regenerateTimer = 0;
-    private const float REGENERATE_INTERVAL = 2.0f;
+    private const float REGENERATE_INTERVAL = 0.5f;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         DebugDraw3D.ScopedConfig().SetThickness(.4f);
-        ot = new OctTree(rootOctAabb, 2);
+        ot = new OctTree(rootOctAabb, 8);
         AddChild(ot);
         for (int i = 0; i < 50; i++)
         {
@@ -36,13 +36,18 @@ public partial class OctTreeTestSceneSetup : Node3D
             boid.Update(delta);
             boid.Draw();
         }
-        // regenerateTimer += (float)delta;
-        // if (regenerateTimer >= REGENERATE_INTERVAL)
-        // {
-        //     GD.Print("OctTree should Regenerate");
-        //     ot.Regenerate();
-        //     regenerateTimer = 0;
-        // }
+        regenerateTimer += (float)delta;
+        if (regenerateTimer >= REGENERATE_INTERVAL)
+        {
+            GD.Print("OctTree should Regenerate");
+            ot.Regenerate();
+            foreach (Boid boid in boids)
+            {
+                boid.aabb = new Aabb(boid.aabb.Position, boidSize);
+                ot.Insert(boid.aabb);
+            }
+            regenerateTimer = 0;
+        }
     }
 
 }
