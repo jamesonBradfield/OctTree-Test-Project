@@ -7,10 +7,10 @@ public class Boid
     Vector3 Acceleration;
     public Aabb aabb;
     public Aabb rootOctAabb;
-    float AlignmentRange = 40f;
+    float AlignmentRange = 30f;
     float CohesionRange = 25f;
     float SeparationRange = 10f;
-    float MaxForce = .2f;
+    float MaxForce = .01f;
     float MaxSpeed = .8f;
 
     public Boid(Aabb aabb, Aabb rootOctAabb)

@@ -15,7 +15,6 @@ public partial class OctTree : Node3D
         nodes.AddFirst(new OctNode(RootAabb, 0));
     }
 
-
     public void Insert(Aabb element)
     {
         InsertRecursive(nodes.First, element);
@@ -112,6 +111,93 @@ public partial class OctTree : Node3D
             Log($"Element {element} added to OctNode({currentNode.Value.bounds},{currentNode.Value.count})");
         }
     }
+    // Add this method to your OctTree class
+    public List<Aabb> Search(Aabb queryArea)
+    {
+        List<Aabb> results = new List<Aabb>();
+
+        // Start recursive search from the root node
+        SearchRecursive(nodes.First, queryArea, results);
+
+        return results;
+    }
+
+    private void SearchRecursive(LinkedListNode<OctNode> currentNode, Aabb queryArea, List<Aabb> results)
+    {
+        // Base case: node doesn't exist
+        if (currentNode == null)
+            return;
+
+        // Skip this node if it doesn't intersect with the query area
+        if (!currentNode.Value.bounds.Intersects(queryArea))
+            return;
+
+        // Case 1: It's a leaf node, check all elements in this node
+        if (currentNode.Value.count > 0)
+        {
+            // Find the first element in this node
+            LinkedListNode<Aabb> elementNode = FindFirstElementInOctNode(currentNode);
+
+            // Iterate through all elements in this node
+            for (int i = 0; i < currentNode.Value.count; i++)
+            {
+                // If this element intersects with the query area, add it to results
+                if (elementNode.Value.Intersects(queryArea))
+                {
+                    results.Add(elementNode.Value);
+                }
+
+                // Move to next element
+                elementNode = elementNode.Next;
+            }
+        }
+
+        // Case 2: It's a non-leaf node, recursively search its children
+        else if (currentNode.Value.count == -1)
+        {
+            // Get all child nodes of current node
+            // We need to find all nodes that are direct children of currentNode
+            HashSet<float> childSizes = new HashSet<float>();
+            LinkedListNode<OctNode> tempNode = nodes.First;
+            while (tempNode != null)
+            {
+                // A node is a direct child if its size is exactly half the parent size
+                // and it is contained within the parent bounds
+                if (Mathf.Abs(tempNode.Value.bounds.Size.X - currentNode.Value.bounds.Size.X / 2) < Mathf.Epsilon &&
+                    currentNode.Value.bounds.Encloses(tempNode.Value.bounds))
+                {
+                    childSizes.Add(tempNode.Value.bounds.Size.X);
+                }
+                tempNode = tempNode.Next;
+            }
+
+            // There should be only one size for all direct children
+            if (childSizes.Count > 0)
+            {
+                float childSize = childSizes.First();
+
+                // Get all nodes at this depth that are direct children
+                List<LinkedListNode<OctNode>> childNodes = GetNodesAtDepth(childSize)
+                    .Where(node => currentNode.Value.bounds.Encloses(node.Value.bounds))
+                    .ToList();
+
+                // Search each child
+                foreach (var child in childNodes)
+                {
+                    SearchRecursive(child, queryArea, results);
+                }
+            }
+        }
+    }
+    // Overload for searching with a center point and radius
+    public List<Aabb> Search(Vector3 center, float radius)
+    {
+        // Create a cubic query area centered at the given point with side length = 2*radius
+        Vector3 halfSize = new Vector3(radius, radius, radius);
+        Aabb queryArea = new Aabb(center - halfSize, halfSize * 2);
+
+        return Search(queryArea);
+    }
     // Get all nodes at a specific depth (identified by their size)
     private List<LinkedListNode<OctNode>> GetNodesAtDepth(float size)
     {
@@ -122,7 +208,7 @@ public partial class OctTree : Node3D
         while (currentNode != null)
         {
             // If the node's size matches our target size, add it to the list
-            if (Mathf.Abs(currentNode.Value.bounds.Size.X - size) < 0.001f) // Using a small epsilon for float comparison
+            if (Mathf.Abs(currentNode.Value.bounds.Size.X - size) < Mathf.Epsilon)
             {
                 nodesAtDepth.Add(currentNode);
             }
@@ -133,32 +219,6 @@ public partial class OctTree : Node3D
         return nodesAtDepth;
     }
 
-    // Get all nodes at specific depths, ordered by depth (root first, then depth 1, etc)
-    private List<LinkedListNode<OctNode>> GetNodesOrderedByDepth()
-    {
-        List<LinkedListNode<OctNode>> orderedNodes = new List<LinkedListNode<OctNode>>();
-        HashSet<float> uniqueSizes = new HashSet<float>();
-
-        // First, collect all unique sizes
-        LinkedListNode<OctNode> currentNode = nodes.First;
-        while (currentNode != null)
-        {
-            uniqueSizes.Add(currentNode.Value.bounds.Size.X);
-            currentNode = currentNode.Next;
-        }
-
-        // Convert to a sorted list (descending order - largest/root first)
-        List<float> sortedSizes = uniqueSizes.ToList();
-        sortedSizes.Sort((a, b) => b.CompareTo(a));
-
-        // Get nodes for each size, in order
-        foreach (float size in sortedSizes)
-        {
-            orderedNodes.AddRange(GetNodesAtDepth(size));
-        }
-
-        return orderedNodes;
-    }
     // Separate method for splitting a node and redistributing elements
     private void SplitNodeAndRedistribute(LinkedListNode<OctNode> nodeToSplit, Aabb newElement)
     {
@@ -270,11 +330,11 @@ public partial class OctTree : Node3D
         Aabb rootBounds = nodes.First.Value.bounds;
 
         // Store all elements before clearing the tree
-        List<Aabb> allElements = new List<Aabb>();
-        foreach (Aabb element in elements)
-        {
-            allElements.Add(element);
-        }
+        // List<Aabb> allElements = new List<Aabb>();
+        // foreach (Aabb element in elements)
+        // {
+        //     allElements.Add(element);
+        // }
 
         // Clear existing nodes and elements
         nodes.Clear();
@@ -282,15 +342,15 @@ public partial class OctTree : Node3D
 
         // Recreate the root node
         nodes.AddFirst(new OctNode(rootBounds, 0));
-
-        // Reinsert all elements
-        Log($"Reinserting {allElements.Count} elements into regenerated tree");
-        foreach (Aabb element in allElements)
-        {
-            Insert(element);
-        }
-
-        Log($"OctTree regenerated with {nodes.Count} nodes and {elements.Count} elements");
+        //
+        // // Reinsert all elements
+        // Log($"Reinserting {allElements.Count} elements into regenerated tree");
+        // foreach (Aabb element in allElements)
+        // {
+        //     Insert(element);
+        // }
+        //
+        // Log($"OctTree regenerated with {nodes.Count} nodes and {elements.Count} elements");
     }
     public override void _Process(double delta)
     {
