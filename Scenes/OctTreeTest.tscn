@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTree/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
 [ext_resource type="Script" uid="uid://byx1pb36p1cxj" path="res://addons/Free fly camera/Src/free_fly_startup.gd" id="2_7sd50"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_7sd50"]
+[ext_resource type="Script" uid="uid://dewyv1u3gg4u6" path="res://Scenes/TreeTest.cs" id="3_g8jbb"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g8jbb"]
 
@@ -11,18 +10,6 @@
 
 [node name="OctTreeSetup" type="Node3D" parent="."]
 script = ExtResource("1_j8u8n")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="OctTreeSetup"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 0)
-mesh = SubResource("BoxMesh_7sd50")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="OctTreeSetup"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 100)
-mesh = SubResource("BoxMesh_7sd50")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="OctTreeSetup"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
-mesh = SubResource("BoxMesh_7sd50")
 
 [node name="Free fly camera" type="CharacterBody3D" parent="."]
 script = ExtResource("2_7sd50")
@@ -38,3 +25,18 @@ metadata/_custom_type_script = "uid://byx1pb36p1cxj"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Free fly camera"]
 shape = SubResource("BoxShape3D_g8jbb")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Control"]
+layout_mode = 0
+offset_right = 173.0
+offset_bottom = 196.0
+
+[node name="Tree" type="Tree" parent="Control/PanelContainer"]
+layout_mode = 2
+script = ExtResource("3_g8jbb")
