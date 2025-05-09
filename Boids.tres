@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BoidResource" load_steps=2 format=3 uid="uid://bx15bnx4vo6gu"]
+
+[ext_resource type="Script" uid="uid://cjdaoultkra8t" path="res://Scripts/Boids/BoidResource.cs" id="1_ueaom"]
+
+[resource]
+script = ExtResource("1_ueaom")
+AlignmentRange = 3.0
+CohesionRange = 5.0
+SeparationRange = 2.0
+followRange = 1.0
+MaxForce = 0.3
+MaxSpeed = 0.5
+AlignmentWeight = 0.8
+CohesionWeight = 0.9
+SeparationWeight = 1.2
+FollowWeight = 0.0
+octreeRefreshInterval = 0.25
+rootOctSize = 200.0
+count = 1000
+metadata/_custom_type_script = "uid://cjdaoultkra8t"

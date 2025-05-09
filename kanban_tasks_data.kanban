@@ -12,7 +12,7 @@
 			"title": "Todo",
 			"tasks": [
 				"3e9c5b14-33ec-4e14-9a93-dbf8c0784f45",
-				"d09c541e-5c4d-499b-a931-d74b7636f372"
+				"07346f4b-7523-4cce-a67c-bb051c50e3a5"
 			]
 		},
 		{
@@ -37,7 +37,8 @@
 				"242658f4-10d4-4663-b525-e2580ae3ea02",
 				"a4ec9878-fd03-4ebc-a451-6babdd8f1d6a",
 				"8a851ec5-8d25-4c44-8406-acff3ce5dc4f",
-				"cacfdc84-0c51-4725-9df6-4afa0618c5c4"
+				"cacfdc84-0c51-4725-9df6-4afa0618c5c4",
+				"d09c541e-5c4d-499b-a931-d74b7636f372"
 			]
 		}
 	],
@@ -249,6 +250,13 @@
 		{
 			"uuid": "cacfdc84-0c51-4725-9df6-4afa0618c5c4",
 			"title": "Fix Player Head Clamping",
+			"description": "",
+			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
+			"steps": []
+		},
+		{
+			"uuid": "07346f4b-7523-4cce-a67c-bb051c50e3a5",
+			"title": "Redo BoidParameterUI to separate Boid Values and OctTree values",
 			"description": "",
 			"category": "52110f3d-565c-4b0d-a237-7a1c2ffd6bf9",
 			"steps": []

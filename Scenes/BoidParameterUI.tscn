@@ -1,0 +1,205 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8byu2t7df06"]
+
+[ext_resource type="Script" uid="uid://bwjq28e0uxcce" path="res://Scripts/Boids/BoidParameterUi.cs" id="1_qksk5"]
+
+[node name="BoidParameterUi" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("1_qksk5")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -735.0
+offset_bottom = -295.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+
+[node name="Boid Settings" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="AlignmentRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/AlignmentRange"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/AlignmentRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+step = 0.5
+
+[node name="CohesionRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/CohesionRange"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/CohesionRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+step = 0.5
+
+[node name="SeparationRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/SeparationRange"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/SeparationRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+step = 0.5
+
+[node name="FollowRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/FollowRange"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/FollowRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+step = 0.5
+
+[node name="MaxForce" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/MaxForce"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/MaxForce"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.01
+
+[node name="MaxSpeed" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/MaxSpeed"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/MaxSpeed"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 5.0
+step = 0.1
+
+[node name="AlignmentWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/AlignmentWeight"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/AlignmentWeight"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.1
+
+[node name="CohesionWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/CohesionWeight"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/CohesionWeight"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.1
+
+[node name="SeparationWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/SeparationWeight"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/SeparationWeight"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.01
+
+[node name="FollowWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boid Settings/FollowWeight"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/FollowWeight"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+
+[node name="OctTree Settings" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="BoidCount" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/OctTree Settings/BoidCount"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/OctTree Settings/BoidCount"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1000.0
+value = 100.0
+
+[node name="OctSize" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/OctTree Settings/OctSize"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/OctTree Settings/OctSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1000.0
+value = 5.0
+
+[node name="RefreshInterval" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/OctTree Settings/RefreshInterval"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/OctTree Settings/RefreshInterval"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 5.0
+step = 0.01
+
+[node name="ShowOctTree" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="TabContainer/OctTree Settings/ShowOctTree"]
+layout_mode = 2
+text = "Toggle OctTree"
+
+[node name="RestartSimulation" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="TabContainer/OctTree Settings/RestartSimulation"]
+layout_mode = 2
+text = "Restart Simulation"

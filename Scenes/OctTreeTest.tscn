@@ -1,42 +1,36 @@
-[gd_scene load_steps=5 format=3 uid="uid://w4x5y1uvgmyn"]
+[gd_scene load_steps=6 format=3 uid="uid://w4x5y1uvgmyn"]
 
 [ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTree/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
+[ext_resource type="Resource" uid="uid://bx15bnx4vo6gu" path="res://Boids.tres" id="2_0ah10"]
 [ext_resource type="Script" uid="uid://byx1pb36p1cxj" path="res://addons/Free fly camera/Src/free_fly_startup.gd" id="2_7sd50"]
-[ext_resource type="Script" uid="uid://dewyv1u3gg4u6" path="res://Scenes/TreeTest.cs" id="3_g8jbb"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_g8jbb"]
+[ext_resource type="PackedScene" uid="uid://b8byu2t7df06" path="res://Scenes/BoidParameterUI.tscn" id="3_g8jbb"]
+[ext_resource type="Script" uid="uid://cbu7ni6cm0a07" path="res://Scripts/Boids/BoidManager.cs" id="4_2344b"]
 
 [node name="OctTreeTest" type="Node3D"]
-
-[node name="OctTreeSetup" type="Node3D" parent="."]
 script = ExtResource("1_j8u8n")
 
 [node name="Free fly camera" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 0)
 script = ExtResource("2_7sd50")
-movement_speed = 50.0
+sprint_multiplier = 5.714
 KEY_FORWARD = "forward"
 KEY_BACKWARD = "backward"
 KEY_LEFT = "left"
 KEY_RIGHT = "right"
 KEY_UP = "up"
 KEY_DOWN = "down"
+collision_state = false
 KEY_ESCAPE = "pause"
 metadata/_custom_type_script = "uid://byx1pb36p1cxj"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Free fly camera"]
-shape = SubResource("BoxShape3D_g8jbb")
+[node name="Node3D" type="Node3D" parent="."]
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="BoidManager" type="Node3D" parent="." node_paths=PackedStringArray("leader")]
+script = ExtResource("4_2344b")
+resource = ExtResource("2_0ah10")
+leader = NodePath("../Node3D")
 
-[node name="PanelContainer" type="PanelContainer" parent="Control"]
-layout_mode = 0
-offset_right = 173.0
-offset_bottom = 196.0
+[node name="BoidParameterUi" parent="." instance=ExtResource("3_g8jbb")]
 
-[node name="Tree" type="Tree" parent="Control/PanelContainer"]
-layout_mode = 2
-script = ExtResource("3_g8jbb")
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+size = Vector3(156.275, 150.359, 1)

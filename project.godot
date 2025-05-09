@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="FirstPerson"
-run/main_scene="res://Scenes/Main.tscn"
+run/main_scene="uid://w4x5y1uvgmyn"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 
 [audio]
@@ -20,7 +20,6 @@ general/default_playback_type.web=0
 
 [autoload]
 
-BoidManagerGlobal="*res://Scripts/Boids/BoidManager.cs"
 CsgToolkitAutoload="*res://addons/csg_toolkit/scripts/csg_toolkit_config.gd"
 PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
 _CameraShake3D="*res://addons/CameraShake3D/CameraShake3D/CameraShake3DNode.gd"

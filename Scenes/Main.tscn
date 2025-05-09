@@ -1,7 +1,6 @@
-[gd_scene load_steps=13 format=4 uid="uid://bqy0hijh0piyl"]
+[gd_scene load_steps=12 format=4 uid="uid://bqy0hijh0piyl"]
 
 [ext_resource type="PackedScene" uid="uid://dveirswtux86l" path="res://Scenes/Player.tscn" id="2_ofovn"]
-[ext_resource type="MeshLibrary" uid="uid://bmop5ly4po146" path="res://Prototype.tres" id="3_kln2b"]
 [ext_resource type="Script" uid="uid://djs5654rrcgok" path="res://Scripts/UIManager.cs" id="8_bmxlf"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_njric"]
@@ -965,13 +964,13 @@ shortcut_keys_enabled = false
 scroll_fit_content_height = true
 scroll_fit_content_width = true
 
-[node name="GridMap" type="GridMap" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.756, 0)
-mesh_library = ExtResource("3_kln2b")
-cell_size = Vector3(4, 4, 4)
-data = {
-"cells": PackedInt32Array(65532, 65532, 1048616, 65532, 65533, 1048616, 65532, 65534, 1048616, 65532, 65535, 1048616, 65532, 0, 1048616, 65532, 1, 1048616, 65532, 2, 1048616, 65532, 3, 1048616, 65532, 4, 1048616, 65533, 65532, 1048616, 65533, 65533, 1048616, 65533, 65534, 1048616, 65533, 65535, 1048616, 65533, 0, 1048616, 65533, 1, 1048616, 65533, 2, 1048616, 65533, 3, 1048616, 65533, 4, 1048616, 65534, 65532, 1048616, 65534, 65533, 1048616, 65534, 65534, 1048616, 65534, 65535, 1048616, 65534, 0, 1048616, 65534, 1, 1048616, 65534, 2, 1048616, 65534, 3, 1048616, 65534, 4, 1048616, 65535, 65532, 1048616, 65535, 65533, 1048616, 65535, 65534, 1048616, 65535, 65535, 1048616, 65535, 0, 1048616, 65535, 1, 1048616, 65535, 2, 1048616, 65535, 3, 1048616, 65535, 4, 1048616, 0, 65532, 1048616, 0, 65533, 1048616, 0, 65534, 1048616, 0, 65535, 1048616, 0, 0, 1048616, 0, 1, 1048616, 0, 2, 1048616, 0, 3, 1048616, 0, 4, 1048616, 1, 65532, 1048616, 1, 65533, 1048616, 1, 65534, 1048616, 1, 65535, 1048616, 1, 0, 1048616, 1, 1, 1048616, 1, 2, 1048616, 1, 3, 1048616, 1, 4, 1048616, 2, 65532, 1048616, 2, 65533, 1048616, 2, 65534, 1048616, 2, 65535, 1048616, 2, 0, 1048616, 2, 1, 1048616, 2, 2, 1048616, 2, 3, 1048616, 2, 4, 1048616, 3, 65532, 1048616, 3, 65533, 1048616, 3, 65534, 1048616, 3, 65535, 1048616, 3, 0, 1048616, 3, 1, 1048616, 3, 2, 1048616, 3, 3, 1048616, 3, 4, 1048616)
-}
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -11)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+use_collision = true
+size = Vector3(52.198, 1, 54.893)
 
 [connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Resume" to="UI" method="Resume"]
 [connection signal="pressed" from="UI/PausePanel/MarginContainer/VBoxContainer/Options" to="UI" method="OptionsPressed"]

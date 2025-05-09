@@ -1,31 +1,16 @@
-using Godot;
-public class OctNode
+public struct OctNode
 {
-    public Aabb bounds;
-    // -1 if its not a leaf, otherwise its holding data
-    public int count;
-
-    //constructor for not-leaf nodes
-    public OctNode(float X, float Y, float Z, Vector3 Size, int count)
+    // we can assume every subdivided node has 8 children. -1 if a leaf.
+    public int firstChildIndex;
+    public int elementCount;
+    public int firstElementIndex;
+    // NOTE: this will be used later on to optimize boid-collision raycasts (IE only having boids in the octNode with this set to true will raycast for collisions)
+    public bool hasCollider;
+    public OctNode(int firstChildIndex, int firstElementIndex, int elementCount, bool hasCollider)
     {
-        this.bounds = new(new(X, Y, Z), Size);
-        this.count = count;
-    }
-    public OctNode(Vector3 Pos, Vector3 Size, int count)
-    {
-        this.bounds = new(Pos, Size);
-        this.count = count;
-    }
-    //constructor for not-leaf nodes
-    public OctNode(Aabb bounds)
-    {
-        this.bounds = bounds;
-        this.count = -1;
-    }
-
-    public OctNode(Aabb bounds, int count)
-    {
-        this.bounds = bounds;
-        this.count = count;
+        this.firstChildIndex = firstChildIndex;
+        this.firstElementIndex = firstElementIndex;
+        this.elementCount = elementCount;
+        this.hasCollider = hasCollider;
     }
 }
