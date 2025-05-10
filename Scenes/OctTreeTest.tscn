@@ -1,13 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://w4x5y1uvgmyn"]
+[gd_scene load_steps=11 format=3 uid="uid://w4x5y1uvgmyn"]
 
-[ext_resource type="Script" uid="uid://pnrawnei4okb" path="res://Scripts/OctTree/OctTreeTestSceneSetup.cs" id="1_j8u8n"]
-[ext_resource type="Resource" uid="uid://bx15bnx4vo6gu" path="res://Boids.tres" id="2_0ah10"]
 [ext_resource type="Script" uid="uid://byx1pb36p1cxj" path="res://addons/Free fly camera/Src/free_fly_startup.gd" id="2_7sd50"]
 [ext_resource type="PackedScene" uid="uid://b8byu2t7df06" path="res://Scenes/BoidParameterUI.tscn" id="3_g8jbb"]
 [ext_resource type="Script" uid="uid://cbu7ni6cm0a07" path="res://Scripts/Boids/BoidManager.cs" id="4_2344b"]
+[ext_resource type="Resource" uid="uid://bic7qqx47v45k" path="res://OctTreeTestBoidResource.tres" id="4_ob188"]
+[ext_resource type="Script" uid="uid://bypbk5lxel4wb" path="res://Scripts/OctTree/Simulator.cs" id="5_2344b"]
+[ext_resource type="Script" uid="uid://bsbdm175qr4t6" path="res://Scripts/OctTree/OctreeResource.cs" id="5_s3rcm"]
+[ext_resource type="Script" uid="uid://chffmj7yuq0q8" path="res://Scripts/Boids/Rules/AlignmentRule.cs" id="7_xp1lt"]
+[ext_resource type="Script" uid="uid://om4h28s5x6os" path="res://Scripts/Boids/Rules/CohesionRule.cs" id="8_br0rf"]
+[ext_resource type="Script" uid="uid://cmrx0k0m8ix77" path="res://Scripts/Boids/Rules/SeparationRule.cs" id="9_cyobp"]
+
+[sub_resource type="Resource" id="Resource_ob188"]
+script = ExtResource("5_s3rcm")
+RootSize = 46.0
+MaxElementsPerNode = 4
+metadata/_custom_type_script = "uid://bsbdm175qr4t6"
 
 [node name="OctTreeTest" type="Node3D"]
-script = ExtResource("1_j8u8n")
 
 [node name="Free fly camera" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 0)
@@ -25,12 +34,27 @@ metadata/_custom_type_script = "uid://byx1pb36p1cxj"
 
 [node name="Node3D" type="Node3D" parent="."]
 
-[node name="BoidManager" type="Node3D" parent="." node_paths=PackedStringArray("leader")]
-script = ExtResource("4_2344b")
-resource = ExtResource("2_0ah10")
-leader = NodePath("../Node3D")
-
 [node name="BoidParameterUi" parent="." instance=ExtResource("3_g8jbb")]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 size = Vector3(156.275, 150.359, 1)
+
+[node name="Simulator" type="Node3D" parent="."]
+script = ExtResource("5_2344b")
+boidResource = ExtResource("4_ob188")
+octreeResource = SubResource("Resource_ob188")
+
+[node name="BoidManager" type="Node3D" parent="Simulator"]
+script = ExtResource("4_2344b")
+
+[node name="AlignmentRule" type="Node" parent="Simulator/BoidManager"]
+script = ExtResource("7_xp1lt")
+resource = ExtResource("4_ob188")
+
+[node name="CohesionRule" type="Node" parent="Simulator/BoidManager"]
+script = ExtResource("8_br0rf")
+resource = ExtResource("4_ob188")
+
+[node name="SeparationRule" type="Node" parent="Simulator/BoidManager"]
+script = ExtResource("9_cyobp")
+resource = ExtResource("4_ob188")

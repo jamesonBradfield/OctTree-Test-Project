@@ -14,7 +14,5 @@ public partial class BoidResource : Resource
     [Export] public float CohesionWeight = 0.8f;    // Pull toward center of flock 
     [Export] public float SeparationWeight = 1.2f;  // Slightly higher to prevent crowding
     [Export] public float FollowWeight = 1.0f;
-    [Export] public float octreeRefreshInterval = 0.25f; // Refresh every 0.1 seconds
-    [Export] public float rootOctSize = 46f;
     [Export] public int count = 100;
 }

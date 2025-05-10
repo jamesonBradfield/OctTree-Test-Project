@@ -4,223 +4,177 @@ using System.Collections.Generic;
 public partial class BoidManager : Node3D
 {
     [Export] public BoidResource resource;
-    public float OctreeRefreshInterval
-    {
-        get => resource.octreeRefreshInterval;
-        set => resource.octreeRefreshInterval = Mathf.Max(0.01f, value); // Prevent extreme values
-    }
 
-    public float timeSinceLastRefresh = 0f;
-    private IOctree octree;
-    public IOctree Octree { get => octree; set => octree = value; }
-    public List<OctTreeElement> elements = new();
-    public List<Vector3> Velocity = new();
-    public List<Vector3> Acceleration = new();
-    [Export] public Node3D leader;
+    // Store velocity and acceleration
+    private List<Vector3> velocities = new();
+    private List<Vector3> accelerations = new();
 
-    public void BuildOctTree(Vector3 worldCenter, int capacity)
-    {
-        octree = new DataOrientedOctTree(worldCenter, resource.rootOctSize, capacity,
-            index => elements[index]); // Pass position lookup function
-        AddChild((Node)octree);
-        RefreshOctTree();
-    }
+    // List of rules
+    private List<BoidRule> rules = new();
 
-    public void RefreshOctTree()
+    // Spatial cell manager for optimization (optional)
+    private SpatialCellManager cellManager;
+
+    // Reusable collections
+    private List<int> filteredNeighborsCache = new List<int>();
+
+    public override void _Ready()
     {
-        octree.Clear();
-        // Create a list of indices (0 to elements.Count-1)
-        List<int> elementIndices = new List<int>(elements.Count);
-        for (int i = 0; i < elements.Count; i++)
+        // Subscribe to child added notification
+        ChildEnteredTree += OnChildEnteredTree;
+        ChildExitingTree += OnChildExitingTree;
+
+        // Collect any rules that are already children
+        foreach (Node child in GetChildren())
         {
-            elementIndices.Add(i);
+            if (child is BoidRule rule)
+            {
+                rules.Add(rule);
+            }
+        }
+    }
+
+    private void OnChildEnteredTree(Node node)
+    {
+        if (node is BoidRule rule)
+        {
+            rules.Add(rule);
+        }
+    }
+
+    private void OnChildExitingTree(Node node)
+    {
+        if (node is BoidRule rule)
+        {
+            rules.Remove(rule);
+        }
+    }
+
+    public void ClearBoids()
+    {
+        velocities.Clear();
+        accelerations.Clear();
+    }
+
+    public void AddBoidData(float vx, float vy, float vz)
+    {
+        velocities.Add(new Vector3(vx, vy, vz).Normalized() * resource.MaxSpeed);
+        accelerations.Add(Vector3.Zero);
+    }
+
+    public void RemoveBoidData(int index)
+    {
+        if (index >= 0 && index < velocities.Count)
+        {
+            velocities.RemoveAt(index);
+            accelerations.RemoveAt(index);
+        }
+    }
+
+    public Vector3 GetVelocity(int index)
+    {
+        return velocities[index];
+    }
+
+    public void HandleCollision(int index, Vector3 normal)
+    {
+        // Reflect velocity using the normal
+        float dotProduct = velocities[index].Dot(normal);
+        Vector3 reflection = velocities[index] - 2 * dotProduct * normal;
+
+        // Maintain max speed while preserving direction
+        velocities[index] = reflection.Normalized() * resource.MaxSpeed;
+    }
+
+    // Return velocity count for data validation
+    public int GetVelocityCount()
+    {
+        return velocities.Count;
+    }
+
+    // Get the maximum range among all active rules
+    public float GetMaxRuleRange()
+    {
+        float maxRange = 0f;
+        foreach (var rule in rules)
+        {
+            maxRange = Mathf.Max(maxRange, rule.GetRange());
+        }
+        return maxRange;
+    }
+
+    // Process all boid behaviors - now works with ISpatialPartitioning
+    public void UpdateBoidBehaviors(List<OctTreeElement> elements, ISpatialPartitioning spatialSystem)
+    {
+        // Check if we should use cell manager's optimized processing
+        if (spatialSystem is SpatialCellManager cellManager)
+        {
+            // Let cell manager handle optimization decisions
+            if (cellManager.ShouldUseCellOptimization(elements.Count))
+            {
+                // Process with cell manager's optimized approach
+                cellManager.ProcessCells(
+                    elements,
+                    spatialSystem, // Pass the spatial system (which could be itself as ISpatialPartitioning)
+                    (boidIdx, neighbors, elems) => FilterNeighborsByDistance(boidIdx, neighbors, elems),
+                    (boidIdx, filteredNeighbors) => ProcessBoid(boidIdx, filteredNeighbors, elements)
+                );
+                return;
+            }
         }
 
-        octree.Insert(elementIndices);
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-        // Update boid positions and flocking behavior
+        // Generic approach for any spatial system (including octree or cell manager fallback)
         for (int index = 0; index < elements.Count; index++)
         {
-            // Get neighbors from octree (using maximum of the three ranges)
-            float maxRange = Mathf.Max(resource.AlignmentRange, Mathf.Max(resource.CohesionRange, resource.SeparationRange));
+            // Get neighbors from spatial system
+            float maxRange = GetMaxRuleRange();
+            List<int> neighbors = spatialSystem.FindNearby(elements[index].Position, maxRange);
 
-            List<int> neighbors = octree.Search(elements[index].Position, maxRange);
-            // neighbors = filterVisible(index, neighbors);
+            // Filter by distance only (no visibility checks)
+            List<int> filteredNeighbors = FilterNeighborsByDistance(index, neighbors, elements);
 
-            Vector3 alignment = Alignment(index, neighbors);
-            Vector3 cohesion = Cohesion(index, neighbors);
-            Vector3 separation = Separation(index, neighbors);
-            Vector3 follow = Follow(index, leader.Position);
-            Acceleration[index] += alignment * resource.AlignmentWeight;
-            Acceleration[index] += cohesion * resource.CohesionWeight;
-            Acceleration[index] += separation * resource.SeparationWeight;
-            Acceleration[index] += follow * resource.FollowWeight;
-            Vector3 NewPosition = elements[index].Position;
-            NewPosition += Velocity[index];
-            Velocity[index] += Acceleration[index];
-            Velocity[index] = Velocity[index].LimitLength(resource.MaxSpeed);
-            Acceleration[index] = Vector3.Zero;
-
-            // var spaceState = GetWorld3D().DirectSpaceState;
-            // var origin = elements[index].Position;
-            // var end = NewPosition;
-            // var query = PhysicsRayQueryParameters3D.Create(origin, end);
-            // var result = spaceState.IntersectRay(query);
-            // if (result.ContainsKey("collider"))
-            // {
-            //     // Calculate exact position adjustment using intersection point and normal
-            //     Vector3 intersectionPoint = (Vector3)result["position"];
-            //     Vector3 normal = (Vector3)result["normal"];
-            //
-            //     // Move boid out of collider along the surface normal
-            //     NewPosition = intersectionPoint + normal * 0.5f; // Adjust scale based on your scene
-            //
-            //     // Reflect velocity using the normal
-            //     float dotProduct = Velocity[index].Dot(normal);
-            //     Vector3 reflection = Velocity[index] - 2 * dotProduct * normal;
-            //
-            //     // Maintain max speed while preserving direction
-            //     Velocity[index] = reflection.Normalized() * resource.MaxSpeed;
-            // }
-            NewPosition = octree.WrapPosition(NewPosition);
-            elements[index] = new(NewPosition, elements[index].Size);
+            // Apply rules
+            ProcessBoid(index, filteredNeighbors, elements);
         }
-        // Update the octree only at specific intervals
-        timeSinceLastRefresh += (float)delta;
-        if (timeSinceLastRefresh >= resource.octreeRefreshInterval)
+    }
+
+    // Process an individual boid
+    private void ProcessBoid(int boidIdx, List<int> neighbors, List<OctTreeElement> elements)
+    {
+        // Apply all rules to calculate total force
+        Vector3 totalForce = Vector3.Zero;
+
+        foreach (var rule in rules)
         {
-            RefreshOctTree();
-            timeSinceLastRefresh = 0f;
+            totalForce += rule.CalculateForce(boidIdx, neighbors, elements, velocities) * rule.Weight;
         }
-    }
-    // public List<int> filterVisible(int self, List<int> neighbors)
-    // {
-    //     List<int> visibleNeighbors = new();
-    //     var spaceState = GetWorld3D().DirectSpaceState;
-    //     for (int i = 0; i < neighbors.Count; i++)
-    //     {
-    //         var query = PhysicsRayQueryParameters3D.Create(elements[self].Position, elements[i].Position);
-    //         var result = spaceState.IntersectRay(query);
-    //         if (!result.ContainsKey("collider"))
-    //         {
-    //             visibleNeighbors.Add(i);
-    //         }
-    //     }
-    //     return visibleNeighbors;
-    // }
 
-    public override void _Process(double delta)
-    {
-        for (int index = 0; index < elements.Count; index++)
-            DebugDraw3D.DrawSquare(elements[index].Position, elements[index].Size, Colors.Black);
+        // Update physics
+        accelerations[boidIdx] += totalForce;
+        velocities[boidIdx] += accelerations[boidIdx];
+        velocities[boidIdx] = velocities[boidIdx].LimitLength(resource.MaxSpeed);
+        accelerations[boidIdx] = Vector3.Zero;
     }
 
-    public void AddBoid(Vector3 Position, float Size)
+    // Filter neighbors by distance only (no visibility checks)
+    private List<int> FilterNeighborsByDistance(int self, List<int> neighbors, List<OctTreeElement> elements)
     {
-        elements.Add(new(Position, Size));
-        Velocity.Add(new Vector3((float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5)).Normalized() * resource.MaxSpeed);
-        Acceleration.Add(new(0, 0, 0));
-    }
-    public void RemoveBoid(int index)
-    {
-        elements.RemoveAt(index);
-        Velocity.RemoveAt(index);
-        Acceleration.RemoveAt(index);
-    }
+        filteredNeighborsCache.Clear();
+        float maxRangeSqr = GetMaxRuleRange() * GetMaxRuleRange();
 
-    public Vector3 Follow(int currentIndex, Vector3 leaderPosition)
-    {
-        // Calculate vector pointing towards the leader
-        Vector3 direction = leaderPosition - elements[currentIndex].Position;
-        direction.Normalized();
-        return direction * resource.MaxSpeed; // Use MaxSpeed as scaling factor
-    }
-
-    public Vector3 Separation(int currentIndex, List<int> neighbors)
-    {
-        Vector3 Steering = Vector3.Zero;
-        int total = 0;
-        foreach (int neighborIndex in neighbors)
+        foreach (int i in neighbors)
         {
             // Skip self
-            if (neighborIndex == currentIndex)
-                continue;
+            if (i == self) continue;
 
-            float Distance = elements[currentIndex].Position.DistanceTo(elements[neighborIndex].Position);
-            if (Distance < resource.SeparationRange)
+            // Check distance using squared distance (more efficient)
+            float distSqr = elements[self].Position.DistanceSquaredTo(elements[i].Position);
+            if (distSqr <= maxRangeSqr)
             {
-                Vector3 difference = elements[currentIndex].Position - elements[neighborIndex].Position;
-                difference /= Distance;
-                Steering += difference;
-                total++;
+                filteredNeighborsCache.Add(i);
             }
         }
 
-        if (total > 0)
-        {
-            Steering /= total;
-            Steering = Steering.Normalized() * resource.MaxSpeed;
-            Steering -= Velocity[currentIndex];
-            Steering = Steering.LimitLength(resource.MaxForce);
-        }
-        return Steering;
-    }
-
-    public Vector3 Cohesion(int currentIndex, List<int> neighbors)
-    {
-        Vector3 Steering = new(0f, 0f, 0f);
-        int total = 0;
-        foreach (int neighborIndex in neighbors)
-        {
-            // Skip self
-            if (neighborIndex == currentIndex)
-                continue;
-
-            if (elements[currentIndex].Position.DistanceTo(elements[neighborIndex].Position) < resource.CohesionRange)
-            {
-                Steering += elements[neighborIndex].Position;
-                total++;
-            }
-        }
-
-        if (total > 0)
-        {
-            Steering /= total;
-            Steering -= elements[currentIndex].Position;
-            Steering = Steering.Normalized() * resource.MaxSpeed;
-            Steering -= Velocity[currentIndex];
-            Steering = Steering.LimitLength(resource.MaxForce);
-        }
-        return Steering;
-    }
-
-    public Vector3 Alignment(int currentIndex, List<int> neighbors)
-    {
-        Vector3 Steering = new(0f, 0f, 0f);
-        int total = 0;
-        foreach (int neighborIndex in neighbors)
-        {
-            // Skip self
-            if (neighborIndex == currentIndex)
-                continue;
-
-            if (elements[currentIndex].Position.DistanceTo(elements[neighborIndex].Position) < resource.AlignmentRange)
-            {
-                Steering += Velocity[neighborIndex];
-                total++;
-            }
-        }
-
-        if (total > 0)
-        {
-            Steering /= total;
-            Steering = Steering.Normalized() * resource.MaxSpeed;
-            Steering -= Velocity[currentIndex];
-            Steering = Steering.LimitLength(resource.MaxForce);
-        }
-        return Steering;
+        return filteredNeighborsCache;
     }
 }

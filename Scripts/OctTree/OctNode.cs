@@ -4,8 +4,9 @@ public struct OctNode
     public int firstChildIndex;
     public int elementCount;
     public int firstElementIndex;
-    // NOTE: this will be used later on to optimize boid-collision raycasts (IE only having boids in the octNode with this set to true will raycast for collisions)
+    // NOTE: this will be used now to optimize boid-collision raycasts
     public bool hasCollider;
+
     public OctNode(int firstChildIndex, int firstElementIndex, int elementCount, bool hasCollider)
     {
         this.firstChildIndex = firstChildIndex;

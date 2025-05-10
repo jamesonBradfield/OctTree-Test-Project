@@ -2,6 +2,7 @@ using Godot;
 
 public partial class BoidParameterUi : Control
 {
+    private Simulator simulator;
     private BoidManager boidManager;
 
     // Sliders
@@ -20,6 +21,7 @@ public partial class BoidParameterUi : Control
     private HSlider boidCountSlider;
     private Button showOctTree;
     private Button restartSimulation;
+
     // Value labels
     private Label alignmentRangeValue;
     private Label cohesionRangeValue;
@@ -30,14 +32,15 @@ public partial class BoidParameterUi : Control
     private Label cohesionWeightValue;
     private Label followWeightValue;
     private Label separationWeightValue;
-
     private Label octTreeRefreshIntervalValue;
     private Label octSizeValue;
     private Label boidCountValue;
+
     public override void _Ready()
     {
-        // Get the boid manager reference
-        boidManager = GetNode<BoidManager>("/root/OctTreeTest/BoidManager");
+        // Get references to the simulator and boid manager
+        simulator = GetNode<Simulator>("/root/OctTreeTest/Simulator");
+        boidManager = GetNode<BoidManager>("/root/OctTreeTest/Simulator/BoidManager");
 
         // Get all slider and label references
         alignmentRangeSlider = GetNode<HSlider>("TabContainer/Boid Settings/AlignmentRange/HSlider");
@@ -51,7 +54,6 @@ public partial class BoidParameterUi : Control
         separationWeightSlider = GetNode<HSlider>("TabContainer/Boid Settings/SeparationWeight/HSlider");
         followWeightSlider = GetNode<HSlider>("TabContainer/Boid Settings/FollowWeight/HSlider");
         octSizeSlider = GetNode<HSlider>("TabContainer/OctTree Settings/OctSize/HSlider");
-
         octTreeRefreshIntervalSlider = GetNode<HSlider>("TabContainer/OctTree Settings/RefreshInterval/HSlider");
         boidCountSlider = GetNode<HSlider>("TabContainer/OctTree Settings/BoidCount/HSlider");
 
@@ -69,17 +71,25 @@ public partial class BoidParameterUi : Control
         octTreeRefreshIntervalValue = GetNode<Label>("TabContainer/OctTree Settings/RefreshInterval/Value");
         showOctTree = GetNode<Button>("TabContainer/OctTree Settings/ShowOctTree/Button");
         restartSimulation = GetNode<Button>("TabContainer/OctTree Settings/RestartSimulation/Button");
-        // Initialize slider values from BoidManager
-        alignmentRangeSlider.Value = boidManager.resource.AlignmentRange;
-        cohesionRangeSlider.Value = boidManager.resource.CohesionRange;
-        separationRangeSlider.Value = boidManager.resource.SeparationRange;
-        maxForceSlider.Value = boidManager.resource.MaxForce;
-        maxSpeedSlider.Value = boidManager.resource.MaxSpeed;
-        alignmentWeightSlider.Value = boidManager.resource.AlignmentWeight;
-        cohesionWeightSlider.Value = boidManager.resource.CohesionWeight;
-        separationWeightSlider.Value = boidManager.resource.SeparationWeight;
-        followWeightSlider.Value = boidManager.resource.FollowWeight;
-        octTreeRefreshIntervalSlider.Value = boidManager.resource.octreeRefreshInterval;
+
+        // Initialize slider values from BoidManager's resource
+        alignmentRangeSlider.Value = simulator.boidResource.AlignmentRange;
+        cohesionRangeSlider.Value = simulator.boidResource.CohesionRange;
+        separationRangeSlider.Value = simulator.boidResource.SeparationRange;
+        followRangeSlider.Value = simulator.boidResource.followRange;
+        maxForceSlider.Value = simulator.boidResource.MaxForce;
+        maxSpeedSlider.Value = simulator.boidResource.MaxSpeed;
+        alignmentWeightSlider.Value = simulator.boidResource.AlignmentWeight;
+        cohesionWeightSlider.Value = simulator.boidResource.CohesionWeight;
+        separationWeightSlider.Value = simulator.boidResource.SeparationWeight;
+        followWeightSlider.Value = simulator.boidResource.FollowWeight;
+
+        octTreeRefreshIntervalSlider.Value = simulator.RefreshInterval;
+
+        octSizeSlider.Value = simulator.octreeResource.RootSize;
+
+        boidCountSlider.Value = simulator.boidResource.count;
+
         // Connect signals
         alignmentRangeSlider.ValueChanged += OnAlignmentRangeChanged;
         cohesionRangeSlider.ValueChanged += OnCohesionRangeChanged;
@@ -95,16 +105,21 @@ public partial class BoidParameterUi : Control
         showOctTree.Pressed += ShowOctTree;
         restartSimulation.Pressed += RestartSimulation;
         octTreeRefreshIntervalSlider.ValueChanged += OnRefreshIntervalChanged;
+
         // Update labels
         UpdateAllLabels();
     }
+
     private void RestartSimulation()
     {
-        GetParent<OctTreeTestSceneSetup>().RestartSimulation();
+        // Update this to work with the new Simulator architecture
+        simulator.RestartSimulation();
     }
+
     private void ShowOctTree()
     {
-        boidManager.Octree.ToggleDebug();
+        // Now the OctTree is part of Simulator, not BoidManager directly
+        simulator.octree.ToggleDebug();
     }
 
     public void UpdateAllLabels()
@@ -123,7 +138,7 @@ public partial class BoidParameterUi : Control
         octTreeRefreshIntervalValue.Text = "Refresh Interval : " + octTreeRefreshIntervalSlider.Value.ToString("0.0");
     }
 
-    // Event handlers
+    // Event handlers - BoidResource parameters
     private void OnAlignmentRangeChanged(double value)
     {
         boidManager.resource.AlignmentRange = (float)value;
@@ -175,15 +190,20 @@ public partial class BoidParameterUi : Control
     private void OnFollowWeightChanged(double value)
     {
         boidManager.resource.FollowWeight = (float)value;
-        followWeightValue.Text = "follow Weight : " + value.ToString("0.0");
+        followWeightValue.Text = "Follow Weight : " + value.ToString("0.0");
     }
 
+    // OctTree parameters - now Simulator's responsibility
     private void OnOctSizeChanged(double value)
     {
-        boidManager.resource.rootOctSize = (float)value;
+        // Update this depending on where you store rootOctSize now
+        // If still in BoidResource:
+        // boidManager.resource.rootOctSize = (float)value;
+        // Or if you moved it to OctreeResource:
+        simulator.octreeResource.RootSize = (float)value;
+
         octSizeValue.Text = "Oct Size(needs restart) : " + value.ToString("0.0");
     }
-
 
     private void OnBoidCountChanged(double value)
     {
@@ -193,7 +213,8 @@ public partial class BoidParameterUi : Control
 
     private void OnRefreshIntervalChanged(double value)
     {
-        boidManager.resource.octreeRefreshInterval = (int)value;
+        // This now should update Simulator's RefreshInterval
+        simulator.RefreshInterval = (float)value;
         octTreeRefreshIntervalValue.Text = "Refresh Interval : " + value.ToString("0.0");
     }
 }
