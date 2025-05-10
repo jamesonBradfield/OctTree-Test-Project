@@ -1,4 +1,0 @@
-Heap Snapshot Analysis
-=====================
-Initial Heap Size: 846K
-Final Heap Size: 570K

@@ -1,7 +1,0 @@
-Trace Summary
-=============
-Date: Mon May  5 03:22:59 PM MDT 2025
-Mode: heap
-Duration: 50 seconds
-Providers: Microsoft-Windows-DotNETRuntime:0x1:5,Microsoft-Windows-DotNETRuntime-Memory:0xC0:5
-
