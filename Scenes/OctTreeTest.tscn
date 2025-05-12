@@ -42,7 +42,7 @@ size = Vector3(156.275, 150.359, 1)
 
 [node name="Simulator" type="Node3D" parent="."]
 script = ExtResource("5_2344b")
-Mode = 0
+Mode = 2
 boidResource = ExtResource("4_ob188")
 octreeResource = SubResource("Resource_ob188")
 

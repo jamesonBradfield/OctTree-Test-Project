@@ -203,3 +203,13 @@ layout_mode = 2
 [node name="Button" type="Button" parent="TabContainer/OctTree Settings/RestartSimulation"]
 layout_mode = 2
 text = "Restart Simulation"
+
+[node name="SpatialMode" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TabContainer/OctTree Settings/SpatialMode"]
+layout_mode = 2
+text = "Spatial System : "
+
+[node name="OptionButton" type="OptionButton" parent="TabContainer/OctTree Settings/SpatialMode"]
+layout_mode = 2

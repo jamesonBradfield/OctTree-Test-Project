@@ -14,5 +14,5 @@ AlignmentWeight = 1.2
 CohesionWeight = 0.8
 SeparationWeight = 0.2
 FollowWeight = 1.0
-count = 1000
+count = 200
 metadata/_custom_type_script = "uid://cjdaoultkra8t"

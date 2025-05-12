@@ -29,6 +29,7 @@ public partial class Simulator : Node3D
     {
         OctTree,
         SpatialCell,
+        BVH,
         Automatic // Switch based on boid count
     }
 
@@ -64,6 +65,7 @@ public partial class Simulator : Node3D
             currentMode = (boidResource.count > AUTO_SWITCH_THRESHOLD) ?
                 SpatialPartitioningMode.SpatialCell :
                 SpatialPartitioningMode.OctTree;
+            // Note: BVH isn't part of automatic switching yet
         }
 
         // Clean up existing spatial system
@@ -84,6 +86,18 @@ public partial class Simulator : Node3D
                 index => elements[index]
             );
             spatialSystem = octree;
+        }
+        else if (currentMode == SpatialPartitioningMode.BVH)
+        {
+            var bvhManager = new BVHManager();
+            AddChild(bvhManager);
+            bvhManager.Initialize(
+                Position,
+                octreeResource.RootSize,  // Use same size for consistency
+                octreeResource.MaxElementsPerNode,  // Use as density hint
+                index => elements[index]  // Same callback function
+            );
+            spatialSystem = bvhManager;
         }
         else // SpatialCell mode
         {

@@ -21,7 +21,7 @@ public partial class BoidParameterUi : Control
     private HSlider boidCountSlider;
     private Button showOctTree;
     private Button restartSimulation;
-
+    private OptionButton spatialSystemModeDropdown;
     // Value labels
     private Label alignmentRangeValue;
     private Label cohesionRangeValue;
@@ -43,35 +43,51 @@ public partial class BoidParameterUi : Control
         boidManager = GetNode<BoidManager>("/root/OctTreeTest/Simulator/BoidManager");
 
         // Get all slider and label references
-        alignmentRangeSlider = GetNode<HSlider>("TabContainer/Boid Settings/AlignmentRange/HSlider");
-        cohesionRangeSlider = GetNode<HSlider>("TabContainer/Boid Settings/CohesionRange/HSlider");
-        separationRangeSlider = GetNode<HSlider>("TabContainer/Boid Settings/SeparationRange/HSlider");
-        followRangeSlider = GetNode<HSlider>("TabContainer/Boid Settings/FollowRange/HSlider");
-        maxForceSlider = GetNode<HSlider>("TabContainer/Boid Settings/MaxForce/HSlider");
-        maxSpeedSlider = GetNode<HSlider>("TabContainer/Boid Settings/MaxSpeed/HSlider");
-        alignmentWeightSlider = GetNode<HSlider>("TabContainer/Boid Settings/AlignmentWeight/HSlider");
-        cohesionWeightSlider = GetNode<HSlider>("TabContainer/Boid Settings/CohesionWeight/HSlider");
-        separationWeightSlider = GetNode<HSlider>("TabContainer/Boid Settings/SeparationWeight/HSlider");
-        followWeightSlider = GetNode<HSlider>("TabContainer/Boid Settings/FollowWeight/HSlider");
-        octSizeSlider = GetNode<HSlider>("TabContainer/OctTree Settings/OctSize/HSlider");
-        octTreeRefreshIntervalSlider = GetNode<HSlider>("TabContainer/OctTree Settings/RefreshInterval/HSlider");
-        boidCountSlider = GetNode<HSlider>("TabContainer/OctTree Settings/BoidCount/HSlider");
+        alignmentRangeSlider = GetNode<HSlider>("TabContainer/Boids/AlignmentRange/HSlider");
+        cohesionRangeSlider = GetNode<HSlider>("TabContainer/Boids/CohesionRange/HSlider");
+        separationRangeSlider = GetNode<HSlider>("TabContainer/Boids/SeparationRange/HSlider");
+        followRangeSlider = GetNode<HSlider>("TabContainer/Boids/FollowRange/HSlider");
+        maxForceSlider = GetNode<HSlider>("TabContainer/Boids/MaxForce/HSlider");
+        maxSpeedSlider = GetNode<HSlider>("TabContainer/Boids/MaxSpeed/HSlider");
+        alignmentWeightSlider = GetNode<HSlider>("TabContainer/Boids/AlignmentWeight/HSlider");
+        cohesionWeightSlider = GetNode<HSlider>("TabContainer/Boids/CohesionWeight/HSlider");
+        separationWeightSlider = GetNode<HSlider>("TabContainer/Boids/SeparationWeight/HSlider");
+        followWeightSlider = GetNode<HSlider>("TabContainer/Boids/FollowWeight/HSlider");
+        octSizeSlider = GetNode<HSlider>("TabContainer/SpatialPartitioning/OctSize/HSlider");
+        octTreeRefreshIntervalSlider = GetNode<HSlider>("TabContainer/SpatialPartitioning/RefreshInterval/HSlider");
+        boidCountSlider = GetNode<HSlider>("TabContainer/SpatialPartitioning/BoidCount/HSlider");
 
-        alignmentRangeValue = GetNode<Label>("TabContainer/Boid Settings/AlignmentRange/Value");
-        cohesionRangeValue = GetNode<Label>("TabContainer/Boid Settings/CohesionRange/Value");
-        separationRangeValue = GetNode<Label>("TabContainer/Boid Settings/SeparationRange/Value");
-        maxForceValue = GetNode<Label>("TabContainer/Boid Settings/MaxForce/Value");
-        maxSpeedValue = GetNode<Label>("TabContainer/Boid Settings/MaxSpeed/Value");
-        alignmentWeightValue = GetNode<Label>("TabContainer/Boid Settings/AlignmentWeight/Value");
-        cohesionWeightValue = GetNode<Label>("TabContainer/Boid Settings/CohesionWeight/Value");
-        separationWeightValue = GetNode<Label>("TabContainer/Boid Settings/SeparationWeight/Value");
-        followWeightValue = GetNode<Label>("TabContainer/Boid Settings/FollowWeight/Value");
-        octSizeValue = GetNode<Label>("TabContainer/OctTree Settings/OctSize/Value");
-        boidCountValue = GetNode<Label>("TabContainer/OctTree Settings/BoidCount/Value");
-        octTreeRefreshIntervalValue = GetNode<Label>("TabContainer/OctTree Settings/RefreshInterval/Value");
-        showOctTree = GetNode<Button>("TabContainer/OctTree Settings/ShowOctTree/Button");
-        restartSimulation = GetNode<Button>("TabContainer/OctTree Settings/RestartSimulation/Button");
+        alignmentRangeValue = GetNode<Label>("TabContainer/Boids/AlignmentRange/Value");
+        cohesionRangeValue = GetNode<Label>("TabContainer/Boids/CohesionRange/Value");
+        separationRangeValue = GetNode<Label>("TabContainer/Boids/SeparationRange/Value");
+        maxForceValue = GetNode<Label>("TabContainer/Boids/MaxForce/Value");
+        maxSpeedValue = GetNode<Label>("TabContainer/Boids/MaxSpeed/Value");
+        alignmentWeightValue = GetNode<Label>("TabContainer/Boids/AlignmentWeight/Value");
+        cohesionWeightValue = GetNode<Label>("TabContainer/Boids/CohesionWeight/Value");
+        separationWeightValue = GetNode<Label>("TabContainer/Boids/SeparationWeight/Value");
+        followWeightValue = GetNode<Label>("TabContainer/Boids/FollowWeight/Value");
+        octSizeValue = GetNode<Label>("TabContainer/SpatialPartitioning/OctSize/Value");
+        boidCountValue = GetNode<Label>("TabContainer/SpatialPartitioning/BoidCount/Value");
+        octTreeRefreshIntervalValue = GetNode<Label>("TabContainer/SpatialPartitioning/RefreshInterval/Value");
+        showOctTree = GetNode<Button>("TabContainer/SpatialPartitioning/ShowOctTree/Button");
+        restartSimulation = GetNode<Button>("TabContainer/SpatialPartitioning/RestartSimulation/Button");
+        spatialSystemModeDropdown = GetNode<OptionButton>("TabContainer/SpatialPartitioning/SpatialMode/OptionButton");
 
+        // Configure dropdown
+        if (spatialSystemModeDropdown != null)
+        {
+            spatialSystemModeDropdown.Clear();
+            spatialSystemModeDropdown.AddItem("OctTree");
+            spatialSystemModeDropdown.AddItem("Spatial Cell");
+            spatialSystemModeDropdown.AddItem("BVH");
+            spatialSystemModeDropdown.AddItem("Automatic");
+
+            // Set initial selection based on simulator mode
+            spatialSystemModeDropdown.Selected = (int)simulator.Mode;
+
+            // Connect signal
+            spatialSystemModeDropdown.ItemSelected += OnSpatialModeChanged;
+        }
         // Initialize slider values from BoidManager's resource
         alignmentRangeSlider.Value = simulator.boidResource.AlignmentRange;
         cohesionRangeSlider.Value = simulator.boidResource.CohesionRange;
@@ -216,5 +232,12 @@ public partial class BoidParameterUi : Control
         // This now should update Simulator's RefreshInterval
         simulator.RefreshInterval = (float)value;
         octTreeRefreshIntervalValue.Text = "Refresh Interval : " + value.ToString("0.0");
+    }
+
+    private void OnSpatialModeChanged(int index)
+    {
+        simulator.Mode = (Simulator.SpatialPartitioningMode)index;
+        // Note that a restart is needed
+        GD.Print("Spatial system mode changed to " + simulator.Mode + ". Restart simulation to apply.");
     }
 }
