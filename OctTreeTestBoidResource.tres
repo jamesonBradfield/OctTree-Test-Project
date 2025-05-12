@@ -4,9 +4,9 @@
 
 [resource]
 script = ExtResource("1_jdjk4")
-AlignmentRange = 30.0
-CohesionRange = 50.0
-SeparationRange = 5.0
+AlignmentRange = 250.0
+CohesionRange = 300.0
+SeparationRange = 10.0
 followRange = 0.0
 MaxForce = 0.3
 MaxSpeed = 1.2

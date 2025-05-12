@@ -25,191 +25,191 @@ grow_horizontal = 2
 grow_vertical = 2
 current_tab = 0
 
-[node name="Boid Settings" type="VBoxContainer" parent="TabContainer"]
+[node name="Boids" type="VBoxContainer" parent="TabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="AlignmentRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="AlignmentRange" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/AlignmentRange"]
+[node name="Value" type="Label" parent="TabContainer/Boids/AlignmentRange"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/AlignmentRange"]
-layout_mode = 2
-size_flags_horizontal = 3
-max_value = 50.0
-step = 0.5
-
-[node name="CohesionRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
-layout_mode = 2
-
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/CohesionRange"]
-layout_mode = 2
-
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/CohesionRange"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/AlignmentRange"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 50.0
 step = 0.5
 
-[node name="SeparationRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="CohesionRange" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/SeparationRange"]
+[node name="Value" type="Label" parent="TabContainer/Boids/CohesionRange"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/SeparationRange"]
-layout_mode = 2
-size_flags_horizontal = 3
-max_value = 50.0
-step = 0.5
-
-[node name="FollowRange" type="HBoxContainer" parent="TabContainer/Boid Settings"]
-layout_mode = 2
-
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/FollowRange"]
-layout_mode = 2
-
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/FollowRange"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/CohesionRange"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 50.0
 step = 0.5
 
-[node name="MaxForce" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="SeparationRange" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/MaxForce"]
+[node name="Value" type="Label" parent="TabContainer/Boids/SeparationRange"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/MaxForce"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/SeparationRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+step = 0.5
+
+[node name="FollowRange" type="HBoxContainer" parent="TabContainer/Boids"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boids/FollowRange"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/FollowRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+step = 0.5
+
+[node name="MaxForce" type="HBoxContainer" parent="TabContainer/Boids"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boids/MaxForce"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/MaxForce"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 2.0
 step = 0.01
 
-[node name="MaxSpeed" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="MaxSpeed" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/MaxSpeed"]
+[node name="Value" type="Label" parent="TabContainer/Boids/MaxSpeed"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/MaxSpeed"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/MaxSpeed"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 5.0
 step = 0.1
 
-[node name="AlignmentWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="AlignmentWeight" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/AlignmentWeight"]
+[node name="Value" type="Label" parent="TabContainer/Boids/AlignmentWeight"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/AlignmentWeight"]
-layout_mode = 2
-size_flags_horizontal = 3
-max_value = 2.0
-step = 0.1
-
-[node name="CohesionWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
-layout_mode = 2
-
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/CohesionWeight"]
-layout_mode = 2
-
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/CohesionWeight"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/AlignmentWeight"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 2.0
 step = 0.1
 
-[node name="SeparationWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="CohesionWeight" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/SeparationWeight"]
+[node name="Value" type="Label" parent="TabContainer/Boids/CohesionWeight"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/SeparationWeight"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/CohesionWeight"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 2.0
+step = 0.1
+
+[node name="SeparationWeight" type="HBoxContainer" parent="TabContainer/Boids"]
+layout_mode = 2
+
+[node name="Value" type="Label" parent="TabContainer/Boids/SeparationWeight"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/SeparationWeight"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 2.0
 step = 0.01
 
-[node name="FollowWeight" type="HBoxContainer" parent="TabContainer/Boid Settings"]
+[node name="FollowWeight" type="HBoxContainer" parent="TabContainer/Boids"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/Boid Settings/FollowWeight"]
+[node name="Value" type="Label" parent="TabContainer/Boids/FollowWeight"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Boid Settings/FollowWeight"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Boids/FollowWeight"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
 step = 0.01
 
-[node name="OctTree Settings" type="VBoxContainer" parent="TabContainer"]
+[node name="SpatialPartitioning" type="VBoxContainer" parent="TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="BoidCount" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+[node name="BoidCount" type="HBoxContainer" parent="TabContainer/SpatialPartitioning"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/OctTree Settings/BoidCount"]
+[node name="Value" type="Label" parent="TabContainer/SpatialPartitioning/BoidCount"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/OctTree Settings/BoidCount"]
+[node name="HSlider" type="HSlider" parent="TabContainer/SpatialPartitioning/BoidCount"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1000.0
 value = 100.0
 
-[node name="OctSize" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+[node name="OctSize" type="HBoxContainer" parent="TabContainer/SpatialPartitioning"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/OctTree Settings/OctSize"]
+[node name="Value" type="Label" parent="TabContainer/SpatialPartitioning/OctSize"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/OctTree Settings/OctSize"]
+[node name="HSlider" type="HSlider" parent="TabContainer/SpatialPartitioning/OctSize"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1000.0
 value = 5.0
 
-[node name="RefreshInterval" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+[node name="RefreshInterval" type="HBoxContainer" parent="TabContainer/SpatialPartitioning"]
 layout_mode = 2
 
-[node name="Value" type="Label" parent="TabContainer/OctTree Settings/RefreshInterval"]
+[node name="Value" type="Label" parent="TabContainer/SpatialPartitioning/RefreshInterval"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/OctTree Settings/RefreshInterval"]
+[node name="HSlider" type="HSlider" parent="TabContainer/SpatialPartitioning/RefreshInterval"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 5.0
 step = 0.01
 
-[node name="ShowOctTree" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+[node name="ShowOctTree" type="HBoxContainer" parent="TabContainer/SpatialPartitioning"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/OctTree Settings/ShowOctTree"]
+[node name="Button" type="Button" parent="TabContainer/SpatialPartitioning/ShowOctTree"]
 layout_mode = 2
 text = "Toggle OctTree"
 
-[node name="RestartSimulation" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+[node name="RestartSimulation" type="HBoxContainer" parent="TabContainer/SpatialPartitioning"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/OctTree Settings/RestartSimulation"]
+[node name="Button" type="Button" parent="TabContainer/SpatialPartitioning/RestartSimulation"]
 layout_mode = 2
 text = "Restart Simulation"
 
-[node name="SpatialMode" type="HBoxContainer" parent="TabContainer/OctTree Settings"]
+[node name="SpatialMode" type="HBoxContainer" parent="TabContainer/SpatialPartitioning"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TabContainer/OctTree Settings/SpatialMode"]
+[node name="Label" type="Label" parent="TabContainer/SpatialPartitioning/SpatialMode"]
 layout_mode = 2
 text = "Spatial System : "
 
-[node name="OptionButton" type="OptionButton" parent="TabContainer/OctTree Settings/SpatialMode"]
+[node name="OptionButton" type="OptionButton" parent="TabContainer/SpatialPartitioning/SpatialMode"]
 layout_mode = 2

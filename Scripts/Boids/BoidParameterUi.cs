@@ -234,7 +234,7 @@ public partial class BoidParameterUi : Control
         octTreeRefreshIntervalValue.Text = "Refresh Interval : " + value.ToString("0.0");
     }
 
-    private void OnSpatialModeChanged(int index)
+    private void OnSpatialModeChanged(long index)
     {
         simulator.Mode = (Simulator.SpatialPartitioningMode)index;
         // Note that a restart is needed
