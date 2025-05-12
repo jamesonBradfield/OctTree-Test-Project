@@ -179,26 +179,26 @@ public partial class Simulator : Node3D
             Vector3 newPosition = elements[i].Position + boidManager.GetVelocity(i);
 
             // Only check collisions for boids near colliders
-            if (spatialSystem.IsNearCollider(elements[i].Position) ||
-                spatialSystem.IsNearCollider(newPosition))
-            {
-                // Perform raycast for collision
-                var spaceState = GetWorld3D().DirectSpaceState;
-                var origin = elements[i].Position;
-                var end = newPosition;
-                var query = PhysicsRayQueryParameters3D.Create(origin, end);
-                var result = spaceState.IntersectRay(query);
-
-                if (result.ContainsKey("collider"))
-                {
-                    // Handle collision
-                    Vector3 intersectionPoint = (Vector3)result["position"];
-                    Vector3 normal = (Vector3)result["normal"];
-
-                    newPosition = intersectionPoint + normal * 0.5f;
-                    boidManager.HandleCollision(i, normal);
-                }
-            }
+            // if (spatialSystem.IsNearCollider(elements[i].Position) ||
+            //     spatialSystem.IsNearCollider(newPosition))
+            // {
+            //     // Perform raycast for collision
+            //     var spaceState = GetWorld3D().DirectSpaceState;
+            //     var origin = elements[i].Position;
+            //     var end = newPosition;
+            //     var query = PhysicsRayQueryParameters3D.Create(origin, end);
+            //     var result = spaceState.IntersectRay(query);
+            //
+            //     if (result.ContainsKey("collider"))
+            //     {
+            //         // Handle collision
+            //         Vector3 intersectionPoint = (Vector3)result["position"];
+            //         Vector3 normal = (Vector3)result["normal"];
+            //
+            //         newPosition = intersectionPoint + normal * 0.5f;
+            //         boidManager.HandleCollision(i, normal);
+            //     }
+            // }
 
             // Apply position wrapping if needed
             newPosition = spatialSystem.WrapPosition(newPosition);

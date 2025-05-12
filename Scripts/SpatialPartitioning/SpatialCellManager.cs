@@ -75,9 +75,9 @@ public partial class SpatialCellManager : Node3D, ISpatialPartitioning
         UpdateCells(elementIndices);
     }
 
-    public List<int> FindNearby(Vector3 position, float range)
+    public List<int> FindNearby(Vector3 position, float range, int maxNeighbors)
     {
-        List<int> result = new List<int>();
+        List<int> searchResults = new List<int>();
 
         // Find the cell containing this position
         Vector3I baseCell = PositionToCell(position);
@@ -126,9 +126,27 @@ public partial class SpatialCellManager : Node3D, ISpatialPartitioning
             }
         }
 
+        if (maxNeighbors < searchResults.Count && maxNeighbors > 0)
+        {
+            var distancePairs = new List<(int index, float distance)>();
+            foreach (int idx in searchResults)
+            {
+                float dist = getElement(idx).Position.DistanceTo(position);
+                distancePairs.Add((idx, dist));
+            }
+
+            distancePairs.Sort((a, b) => a.distance.CompareTo(b.distance));
+
+            var limitedResults = new List<int>();
+            for (int i = 0; i < maxNeighbors && i < distancePairs.Count; i++)
+            {
+                limitedResults.Add(distancePairs[i].index);
+            }
+            return limitedResults;
+        }
         // Convert set to list
-        result.AddRange(tempNeighborSet);
-        return result;
+        searchResults.AddRange(tempNeighborSet);
+        return searchResults;
     }
 
     public bool IsNearCollider(Vector3 position)

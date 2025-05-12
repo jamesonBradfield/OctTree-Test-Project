@@ -209,11 +209,13 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
         Vector3 nodeSize = nodeSizes[nodeIndex];
 
         // Find the longest axis
-        int axis = 0; // 0 = X, 1 = Y, 2 = Z
-        if (nodeSize.Y > nodeSize.X && nodeSize.Y > nodeSize.Z)
-            axis = 1;
-        else if (nodeSize.Z > nodeSize.X && nodeSize.Z > nodeSize.Y)
-            axis = 2;
+        // 0 = X, 1 = Y, 2 = Z
+        // int axis = 0;
+        int axis = (nodeSize.Y > nodeSize.X && nodeSize.Y > nodeSize.Z) ? (1) : (nodeSize.Z > nodeSize.X && nodeSize.Z > nodeSize.Y) ? (2) : (0);
+        // if (nodeSize.Y > nodeSize.X && nodeSize.Y > nodeSize.Z)
+        //     axis = 1;
+        // else if (nodeSize.Z > nodeSize.X && nodeSize.Z > nodeSize.Y)
+        //     axis = 2;
 
         // Collect elements from this node
         leftElements.Clear();
@@ -437,7 +439,7 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
         elementIndices = newElementIndices;
     }
 
-    public List<int> FindNearby(Vector3 position, float range)
+    public List<int> FindNearby(Vector3 position, float range, int maxNeighbors)
     {
         tempResults.Clear();
 
@@ -488,7 +490,6 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
                 nodesToCheck.Enqueue(node.firstChildIndex + 1);
             }
         }
-
         return tempResults;
     }
 
@@ -588,35 +589,35 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
     private void MarkNodesWithColliders(PhysicsDirectSpaceState3D spaceState)
     {
         // Iterate through all nodes
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            BVHNode node = nodes[i];
-            Vector3 nodePos = nodePositions[i];
-            Vector3 nodeSize = nodeSizes[i];
-
-            // Skip tiny nodes for performance
-            if (nodeSize.X < 0.1f || nodeSize.Y < 0.1f || nodeSize.Z < 0.1f)
-                continue;
-
-            // Test for colliders
-            var shape = new BoxShape3D();
-            shape.Size = nodeSize;
-
-            var parameters = new PhysicsShapeQueryParameters3D();
-            parameters.Shape = shape;
-            parameters.Transform = new Transform3D(Basis.Identity, nodePos);
-            parameters.CollideWithBodies = true;
-            parameters.CollisionMask = 1; // Adjust based on your collision layers
-
-            var results = spaceState.IntersectShape(parameters);
-
-            // Mark node
-            node.hasCollider = results.Count > 0;
-            nodes[i] = node;
-        }
-
-        // Propagate collider flags up the tree
-        PropagateColliderFlags();
+        // for (int i = 0; i < nodes.Count; i++)
+        // {
+        //     BVHNode node = nodes[i];
+        //     Vector3 nodePos = nodePositions[i];
+        //     Vector3 nodeSize = nodeSizes[i];
+        //
+        //     // Skip tiny nodes for performance
+        //     if (nodeSize.X < 0.1f || nodeSize.Y < 0.1f || nodeSize.Z < 0.1f)
+        //         continue;
+        //
+        //     // Test for colliders
+        //     var shape = new BoxShape3D();
+        //     shape.Size = nodeSize;
+        //
+        //     var parameters = new PhysicsShapeQueryParameters3D();
+        //     parameters.Shape = shape;
+        //     parameters.Transform = new Transform3D(Basis.Identity, nodePos);
+        //     parameters.CollideWithBodies = true;
+        //     parameters.CollisionMask = 1; // Adjust based on your collision layers
+        //
+        //     var results = spaceState.IntersectShape(parameters);
+        //
+        //     // Mark node
+        //     node.hasCollider = results.Count > 0;
+        //     nodes[i] = node;
+        // }
+        //
+        // // Propagate collider flags up the tree
+        // PropagateColliderFlags();
     }
 
     private void PropagateColliderFlags()

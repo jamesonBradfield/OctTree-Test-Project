@@ -247,13 +247,13 @@ public partial class DataOrientedOctTree : Node3D, ISpatialPartitioning
         }
     }
 
-    public List<int> FindNearby(Vector3 position, float range)
+    public List<int> FindNearby(Vector3 position, float range, int maxNeighbors)
     {
         // Clear and reuse our collections
         searchResults.Clear();
         searchStack.Clear();
 
-        // Safety check - make sure we have nodes and positions
+        // Safety check - make sure we have nodes and positions (since we have seperate lists there is a chance of desync)
         if (nodes.Count == 0 || nodePositions.Count == 0 || nodeSizes.Count == 0)
             return searchResults;
 
@@ -335,7 +335,24 @@ public partial class DataOrientedOctTree : Node3D, ISpatialPartitioning
                 }
             }
         }
+        if (maxNeighbors < searchResults.Count && maxNeighbors > 0)
+        {
+            var distancePairs = new List<(int index, float distance)>();
+            foreach (int idx in searchResults)
+            {
+                float dist = getBoid(idx).Position.DistanceTo(position);
+                distancePairs.Add((idx, dist));
+            }
 
+            distancePairs.Sort((a, b) => a.distance.CompareTo(b.distance));
+
+            var limitedResults = new List<int>();
+            for (int i = 0; i < maxNeighbors && i < distancePairs.Count; i++)
+            {
+                limitedResults.Add(distancePairs[i].index);
+            }
+            return limitedResults;
+        }
         return searchResults;
     }
 

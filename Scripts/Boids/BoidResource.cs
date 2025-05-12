@@ -14,5 +14,6 @@ public partial class BoidResource : Resource
     [Export] public float CohesionWeight = 0.8f;    // Pull toward center of flock 
     [Export] public float SeparationWeight = 1.2f;  // Slightly higher to prevent crowding
     [Export] public float FollowWeight = 1.0f;
+    [Export] public int MaxNeighborsToConsider = 7;
     [Export] public int count = 100;
 }

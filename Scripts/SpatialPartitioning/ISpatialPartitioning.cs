@@ -13,7 +13,7 @@ public interface ISpatialPartitioning
     void Insert(List<int> elementIndices);
 
     // Find elements within a certain range of a position
-    List<int> FindNearby(Vector3 position, float range);
+    List<int> FindNearby(Vector3 position, float range, int maxNeighbors = int.MaxValue);
 
     // Check if a position is near a collider
     bool IsNearCollider(Vector3 position);
