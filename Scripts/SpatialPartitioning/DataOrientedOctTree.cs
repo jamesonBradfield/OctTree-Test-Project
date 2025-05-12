@@ -119,7 +119,7 @@ public partial class DataOrientedOctTree : Node3D, ISpatialPartitioning
             Vector3 nodePos = nodePositions[0]; // Root position
             float nodeSize = nodeSizes[0];      // Root size
             int depth = 0;
-            const int MAX_DEPTH = 10;
+            const int MAX_DEPTH = 5;
 
             // Traverse tree to find insert location
             bool inserted = false;

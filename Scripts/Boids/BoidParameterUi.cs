@@ -119,7 +119,7 @@ public partial class BoidParameterUi : Control
     private void ShowOctTree()
     {
         // Now the OctTree is part of Simulator, not BoidManager directly
-        simulator.octree.ToggleDebug();
+        simulator.spatialSystem.ToggleDebug();
     }
 
     public void UpdateAllLabels()

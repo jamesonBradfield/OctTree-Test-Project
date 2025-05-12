@@ -4,15 +4,15 @@
 [ext_resource type="PackedScene" uid="uid://b8byu2t7df06" path="res://Scenes/BoidParameterUI.tscn" id="3_g8jbb"]
 [ext_resource type="Script" uid="uid://cbu7ni6cm0a07" path="res://Scripts/Boids/BoidManager.cs" id="4_2344b"]
 [ext_resource type="Resource" uid="uid://bic7qqx47v45k" path="res://OctTreeTestBoidResource.tres" id="4_ob188"]
-[ext_resource type="Script" uid="uid://bypbk5lxel4wb" path="res://Scripts/OctTree/Simulator.cs" id="5_2344b"]
-[ext_resource type="Script" uid="uid://bsbdm175qr4t6" path="res://Scripts/OctTree/OctreeResource.cs" id="5_s3rcm"]
+[ext_resource type="Script" uid="uid://bypbk5lxel4wb" path="res://Scripts/Simulator.cs" id="5_2344b"]
+[ext_resource type="Script" uid="uid://bsbdm175qr4t6" path="res://Scripts/SpatialPartitioning/OctreeResource.cs" id="5_s3rcm"]
 [ext_resource type="Script" uid="uid://chffmj7yuq0q8" path="res://Scripts/Boids/Rules/AlignmentRule.cs" id="7_xp1lt"]
 [ext_resource type="Script" uid="uid://om4h28s5x6os" path="res://Scripts/Boids/Rules/CohesionRule.cs" id="8_br0rf"]
 [ext_resource type="Script" uid="uid://cmrx0k0m8ix77" path="res://Scripts/Boids/Rules/SeparationRule.cs" id="9_cyobp"]
 
 [sub_resource type="Resource" id="Resource_ob188"]
 script = ExtResource("5_s3rcm")
-RootSize = 46.0
+RootSize = 300.0
 MaxElementsPerNode = 4
 metadata/_custom_type_script = "uid://bsbdm175qr4t6"
 
@@ -37,10 +37,12 @@ metadata/_custom_type_script = "uid://byx1pb36p1cxj"
 [node name="BoidParameterUi" parent="." instance=ExtResource("3_g8jbb")]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
+use_collision = true
 size = Vector3(156.275, 150.359, 1)
 
 [node name="Simulator" type="Node3D" parent="."]
 script = ExtResource("5_2344b")
+Mode = 0
 boidResource = ExtResource("4_ob188")
 octreeResource = SubResource("Resource_ob188")
 

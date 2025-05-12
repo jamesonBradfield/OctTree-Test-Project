@@ -7,7 +7,7 @@ public partial class Simulator : Node3D
     private List<OctTreeElement> elements = new();
 
     private BoidManager boidManager;
-    private ISpatialPartitioning spatialSystem;
+    public ISpatialPartitioning spatialSystem;
 
     // Configuration
     [Export] public SpatialPartitioningMode Mode = SpatialPartitioningMode.Automatic;

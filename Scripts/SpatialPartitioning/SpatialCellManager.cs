@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-public partial class SpatialCellManager : Node, ISpatialPartitioning
+public partial class SpatialCellManager : Node3D, ISpatialPartitioning
 {
     // Cell data structure
     private struct CellData
@@ -268,7 +268,7 @@ public partial class SpatialCellManager : Node, ISpatialPartitioning
     }
 
     // Process all cells with provided action (original method signature maintained)
-    public void ProcessCells(List<OctTreeElement> elements, IOctree octree,
+    public void ProcessCells(List<OctTreeElement> elements, ISpatialPartitioning octree,
                            System.Func<int, List<int>, List<OctTreeElement>, List<int>> filterFunc,
                            System.Action<int, List<int>> processBoidFunc)
     {
@@ -316,7 +316,7 @@ public partial class SpatialCellManager : Node, ISpatialPartitioning
 
     // Process a sparsely populated cell using direct octree queries
     private void ProcessCellWithOctree(CellData cell, List<OctTreeElement> elements,
-                                     IOctree octree,
+                                     ISpatialPartitioning octree,
                                      System.Func<int, List<int>, List<OctTreeElement>, List<int>> filterFunc,
                                      System.Action<int, List<int>> processBoidFunc)
     {
