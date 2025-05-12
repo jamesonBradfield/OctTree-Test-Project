@@ -24,6 +24,7 @@ public partial class Simulator : Node3D
     private const int AUTO_SWITCH_THRESHOLD = 500; // Switch to cells above this count
 
     private List<int> refreshIndices = new List<int>();
+    private SpatialPartitioningVisualizer visualizer;
 
     public enum SpatialPartitioningMode
     {
@@ -37,7 +38,8 @@ public partial class Simulator : Node3D
     {
         boidManager = GetNode<BoidManager>("BoidManager");
         boidManager.resource = boidResource;
-
+        visualizer = new SpatialPartitioningVisualizer();
+        AddChild(visualizer);
         // Create initial spatial system based on configuration
         InitializeSpatialSystem();
 
@@ -111,6 +113,13 @@ public partial class Simulator : Node3D
             );
             spatialSystem = cellManager;
         }
+        visualizer.Target = spatialSystem;
+    }
+
+    // Add a method to toggle visualization
+    public void ToggleVisualization()
+    {
+        visualizer.Toggle();
     }
     // Add this method to your Simulator class
     [Conditional("DEBUG")]

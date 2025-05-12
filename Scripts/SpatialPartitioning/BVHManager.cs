@@ -36,7 +36,6 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
     private float rootSize;
     private int maxElementsPerNode = 8;
     private System.Func<int, OctTreeElement> getElement;
-    private bool debugVisible = false;
 
     // Properties for debugging
     public int NodeCount => nodes.Count;
@@ -57,7 +56,23 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
 
         Clear();
     }
+    public List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData()
+    {
+        var result = new List<(Vector3, Vector3, bool, bool)>();
 
+        // Collect visualization data from all nodes
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            BVHNode node = nodes[i];
+            Vector3 position = nodePositions[i];
+            Vector3 size = nodeSizes[i];
+            bool isLeaf = node.firstChildIndex < 0;
+
+            result.Add((position, size, isLeaf, node.hasCollider));
+        }
+
+        return result;
+    }
     public void Clear()
     {
         nodes.Clear();
@@ -629,59 +644,6 @@ public partial class BVHManager : Node3D, ISpatialPartitioning
                 node.hasCollider = leftHasCollider || rightHasCollider;
                 nodes[i] = node;
             }
-        }
-    }
-
-    public void ToggleDebug()
-    {
-        debugVisible = !debugVisible;
-    }
-
-    public override void _Process(double delta)
-    {
-        if (debugVisible)
-        {
-            DrawDebug();
-        }
-    }
-
-    private void DrawDebug()
-    {
-        // Draw all nodes
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            BVHNode node = nodes[i];
-            Vector3 nodePos = nodePositions[i];
-            Vector3 nodeSize = nodeSizes[i];
-
-            // Select color based on type
-            Color color;
-            if (node.firstChildIndex == -1)
-            {
-                // Leaf node
-                if (node.hasCollider)
-                    color = new Color(1, 0, 0, 0.3f); // Red for colliders
-                else
-                    color = new Color(0, 1, 0, 0.2f); // Green for leaves
-            }
-            else
-            {
-                // Internal node
-                if (node.hasCollider)
-                    color = new Color(1, 0.5f, 0, 0.1f); // Orange for internal with colliders
-                else
-                    color = new Color(0, 0, 1, 0.05f); // Blue for internal
-            }
-
-            // Draw box
-            DebugDraw3D.DrawBox(
-                nodePos,
-                Quaternion.Identity,
-                nodeSize,
-                color,
-                true,
-                0
-            );
         }
     }
 }

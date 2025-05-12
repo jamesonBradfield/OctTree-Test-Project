@@ -118,7 +118,7 @@ public partial class BoidParameterUi : Control
         followWeightSlider.ValueChanged += OnFollowWeightChanged;
         octSizeSlider.ValueChanged += OnOctSizeChanged;
         boidCountSlider.ValueChanged += OnBoidCountChanged;
-        showOctTree.Pressed += ShowOctTree;
+        showOctTree.Pressed += ShowPartitioningVisualizer;
         restartSimulation.Pressed += RestartSimulation;
         octTreeRefreshIntervalSlider.ValueChanged += OnRefreshIntervalChanged;
 
@@ -132,10 +132,9 @@ public partial class BoidParameterUi : Control
         simulator.RestartSimulation();
     }
 
-    private void ShowOctTree()
+    private void ShowPartitioningVisualizer()
     {
-        // Now the OctTree is part of Simulator, not BoidManager directly
-        simulator.spatialSystem.ToggleDebug();
+        simulator.ToggleVisualization();
     }
 
     public void UpdateAllLabels()

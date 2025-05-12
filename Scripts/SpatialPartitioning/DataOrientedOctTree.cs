@@ -97,7 +97,67 @@ public partial class DataOrientedOctTree : Node3D, ISpatialPartitioning
         // Create the root node (this is a leaf with no elements)
         nodes.Add(new OctNode(-1, -1, 0, false));
     }
+    public List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData()
+    {
+        var result = new List<(Vector3, Vector3, bool, bool)>();
 
+        // Use our existing stack for iterative traversal
+        drawStack.Clear();
+
+        // Push root node to stack
+        if (nodes.Count > 0 && nodePositions.Count > 0 && nodeSizes.Count > 0)
+        {
+            drawStack.Push(new NodeDrawInfo(0, nodePositions[0], nodeSizes[0]));
+        }
+
+        // Iterative traversal
+        while (drawStack.Count > 0)
+        {
+            // Get current node from stack
+            NodeDrawInfo current = drawStack.Pop();
+            int nodeIndex = current.nodeIndex;
+            Vector3 nodePos = current.position;
+            float nodeSize = current.size;
+
+            // Skip if node index is invalid
+            if (nodeIndex >= nodes.Count)
+                continue;
+
+            OctNode node = nodes[nodeIndex];
+
+            // Add this node to visualization data
+            Vector3 boxSize = new Vector3(nodeSize, nodeSize, nodeSize);
+            bool isLeaf = node.firstChildIndex < 0;
+
+            result.Add((nodePos, boxSize, isLeaf, node.hasCollider));
+
+            // If internal node, push all children to stack
+            if (node.firstChildIndex >= 0)
+            {
+                float childSize = nodeSize / 2;
+                for (int octant = 0; octant < 8; octant++)
+                {
+                    int childIndex = node.firstChildIndex + octant;
+
+                    // Use cached position if available, otherwise calculate
+                    Vector3 childPos;
+                    if (childIndex < nodePositions.Count)
+                    {
+                        childPos = nodePositions[childIndex];
+                    }
+                    else
+                    {
+                        // Calculate child position if not cached
+                        childPos = CalculateChildPosition(nodePos, nodeSize, octant);
+                    }
+
+                    drawStack.Push(new NodeDrawInfo(childIndex, childPos, childSize));
+                }
+            }
+        }
+
+        return result;
+    }
     public void Insert(List<int> elements)
     {
         // Pre-estimate capacity for better performance
@@ -353,20 +413,6 @@ public partial class DataOrientedOctTree : Node3D, ISpatialPartitioning
 
         // Start with root node
         MarkNodeWithColliders(0, nodePositions[0], nodeSizes[0], spaceState);
-    }
-
-    public void ToggleDebug()
-    {
-        debug = !debug;
-    }
-
-    // Add to DataOrientedOctTree.cs
-    public override void _Process(double delta)
-    {
-        if (debug)
-        {
-            DrawOctree();
-        }
     }
 
     // Private helper methods

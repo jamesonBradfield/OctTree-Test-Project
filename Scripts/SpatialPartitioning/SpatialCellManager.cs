@@ -197,11 +197,6 @@ public partial class SpatialCellManager : Node3D, ISpatialPartitioning
         MarkCellsWithColliders(spaceState);
     }
 
-    public void ToggleDebug()
-    {
-        debugVisible = !debugVisible;
-    }
-
     // Cell-specific methods (preserved functionality from original)
 
     // Determine if cell optimization should be used
@@ -427,46 +422,36 @@ public partial class SpatialCellManager : Node3D, ISpatialPartitioning
         }
     }
 
-    // Debug visualization
-    public override void _Process(double delta)
+    public List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData()
     {
-        if (debugVisible)
-        {
-            DrawDebugCells();
-        }
-    }
+        var result = new List<(Vector3, Vector3, bool, bool)>();
 
-    private void DrawDebugCells()
-    {
+        // Iterate through all active cells
         foreach (var cellPair in cellLookup)
         {
             Vector3I cellCoord = cellPair.Key;
+            int cellIdx = cellPair.Value;
+
+            // Calculate world position of this cell
             Vector3 cellPosition = new Vector3(
                 (cellCoord.X + 0.5f) * cellSize,
                 (cellCoord.Y + 0.5f) * cellSize,
                 (cellCoord.Z + 0.5f) * cellSize
             );
 
-            // Color based on whether cell has colliders
-            Color color = cellsWithColliders.Contains(cellCoord) ?
-                new Color(1, 0, 0, 0.2f) : // Red for cells with colliders
-                new Color(0, 1, 0, 0.1f);  // Green for normal cells
+            // Create box size
+            Vector3 cellSizeVector = new Vector3(cellSize, cellSize, cellSize);
 
-            // Make cells with boids more visible
-            int boidCount = activeCells[cellPair.Value].boids.Count;
-            if (boidCount > 0)
-            {
-                color.A = Mathf.Clamp(0.2f + boidCount * 0.01f, 0.2f, 0.5f);
-            }
+            // Check if cell has colliders
+            bool hasCollider = cellsWithColliders.Contains(cellCoord);
 
-            DebugDraw3D.DrawBox(
-                cellPosition,
-                Quaternion.Identity,
-                new Vector3(cellSize, cellSize, cellSize),
-                color,
-                true,
-                0
-            );
+            // All cells are considered "leaf" nodes in the cell manager
+            bool isLeaf = true;
+
+            // Add to result
+            result.Add((cellPosition, cellSizeVector, isLeaf, hasCollider));
         }
+
+        return result;
     }
 }

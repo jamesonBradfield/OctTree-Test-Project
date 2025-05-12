@@ -23,7 +23,5 @@ public interface ISpatialPartitioning
 
     // Update/mark collider information
     void UpdateColliderInfo();
-
-    // Optional: Toggle visualization for debugging
-    void ToggleDebug();
+    List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData();
 }
