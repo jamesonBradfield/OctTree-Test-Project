@@ -4,9 +4,9 @@
 
 [resource]
 script = ExtResource("1_jdjk4")
-AlignmentRange = 250.0
-CohesionRange = 300.0
-SeparationRange = 10.0
+AlignmentRange = 10.0
+CohesionRange = 8.0
+SeparationRange = 3.0
 followRange = 0.0
 MaxForce = 0.3
 MaxSpeed = 1.2
@@ -14,5 +14,6 @@ AlignmentWeight = 1.2
 CohesionWeight = 0.8
 SeparationWeight = 0.2
 FollowWeight = 1.0
-count = 200
+MaxNeighborsToConsider = 4
+count = 10000
 metadata/_custom_type_script = "uid://cjdaoultkra8t"

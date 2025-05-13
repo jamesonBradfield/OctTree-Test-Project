@@ -1,650 +1,402 @@
 using Godot;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
-public partial class BVHManager : Node3D, ISpatialPartitioning
+/// <summary>
+/// BVHManager implements the ISpatialPartitioning interface using an AABBTree
+/// for efficient spatial queries in a boid simulation.
+/// </summary>
+public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
 {
-    // Data-oriented flattened BVH structure - much smaller now
-    private struct BVHNode
-    {
-        public int firstChildIndex;    // -1 for leaf nodes
-        public int elementCount;       // Number of elements in a leaf
-        public int firstElementIndex;  // Start index in elementIndices list
-        public bool hasCollider;       // For collision detection
+    // The underlying BVH structure
+    private AABBTree<ElementWrapper> tree;
 
-        public BVHNode(int firstChildIndex, int elementCount, int firstElementIndex, bool hasCollider)
+    // Root position and size (for bounds checking and wrapping)
+    private Vector3 rootPosition;
+    private float rootSize;
+    private float halfSize;
+
+    // Function to get elements from the simulation
+    private Func<int, OctTreeElement> getElement;
+
+    // Dictionary to map element indices to their wrappers
+    private Dictionary<int, ElementWrapper> wrappers = new Dictionary<int, ElementWrapper>();
+
+    // Collider tracking
+    private List<int> elementsNearColliders = new List<int>();
+
+    // Wrapper class to store element index and implement ICollider
+    private class ElementWrapper : ICollider
+    {
+        public int Index { get; private set; }
+        public OctTreeElement Element => getElementFunc(Index);
+        private Func<int, OctTreeElement> getElementFunc;
+
+        // Cache the AABB to avoid recalculations
+        private Aabb cachedAabb;
+        private Vector3 cachedPosition;
+
+        public bool IsNearCollider { get; set; } = false;
+
+        public ElementWrapper(int index, Func<int, OctTreeElement> getElementFunc)
         {
-            this.firstChildIndex = firstChildIndex;
-            this.elementCount = elementCount;
-            this.firstElementIndex = firstElementIndex;
-            this.hasCollider = hasCollider;
+            Index = index;
+            this.getElementFunc = getElementFunc;
+            UpdateAabb();
+        }
+
+        public void UpdateAabb()
+        {
+            var element = Element;
+            cachedPosition = element.Position;
+
+            // Create AABB around the element with its size
+            float halfSize = element.Size / 2f;
+            Vector3 extents = new Vector3(halfSize, halfSize, halfSize);
+            cachedAabb = new Aabb(cachedPosition - extents, extents * 2);
+        }
+
+        public Aabb GetAabb()
+        {
+            // Check if position has changed
+            if (Element.Position != cachedPosition)
+            {
+                UpdateAabb();
+            }
+            return cachedAabb;
         }
     }
 
-    // Separate lists for positions and sizes
-    private List<BVHNode> nodes = new();
-    private List<Vector3> nodePositions = new();
-    private List<Vector3> nodeSizes = new();
-    private List<int> elementIndices = new();
-
-    // Temp collections to avoid allocations
-    private List<int> tempResults = new();
-    private List<int> leftElements = new();
-    private List<int> rightElements = new();
-
-    // Configuration
-    private Vector3 rootPosition;
-    private float rootSize;
-    private int maxElementsPerNode = 8;
-    private System.Func<int, OctTreeElement> getElement;
-
-    // Properties for debugging
-    public int NodeCount => nodes.Count;
-    public int ElementCount => elementIndices.Count;
-
-    public BVHManager()
-    {
-        // Default constructor for Node3D
-    }
-
-    // ISpatialPartitioning implementation
-    public void Initialize(Vector3 rootPosition, float rootSize, int capacity, System.Func<int, OctTreeElement> getElement)
+    /// <summary>
+    /// Initializes the BVH Manager with simulation parameters.
+    /// </summary>
+    public void Initialize(Vector3 rootPosition, float rootSize, int capacity, Func<int, OctTreeElement> getElement)
     {
         this.rootPosition = rootPosition;
         this.rootSize = rootSize;
-        this.maxElementsPerNode = capacity;
+        this.halfSize = rootSize / 2f;
         this.getElement = getElement;
 
-        Clear();
+        // Initialize the BVH tree with our modified version
+        InitializeAabbTree();
+
+        // Set the margin and multiplier appropriate for boid simulation
+        // These could be exposed as properties if needed
+        SetAabbTreeProperties(0.2f, 1.5f);
     }
-    public List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData()
+
+    // Helper method to initialize the tree with appropriate error handling
+    private void InitializeAabbTree()
     {
-        var result = new List<(Vector3, Vector3, bool, bool)>();
-
-        // Collect visualization data from all nodes
-        for (int i = 0; i < nodes.Count; i++)
+        try
         {
-            BVHNode node = nodes[i];
-            Vector3 position = nodePositions[i];
-            Vector3 size = nodeSizes[i];
-            bool isLeaf = node.firstChildIndex < 0;
+            tree = new AABBTree<ElementWrapper>();
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Error initializing AABBTree: {ex.Message}");
+            // Create fallback if initialization fails
+            tree = new AABBTree<ElementWrapper>();
+        }
+    }
 
-            result.Add((position, size, isLeaf, node.hasCollider));
+    // Helper method to set tree properties with error handling
+    private void SetAabbTreeProperties(float margin, float multiplier)
+    {
+        try
+        {
+            // Use reflection to set these properties since they might be private
+            var treeType = tree.GetType();
+            treeType.GetField("AabbMargin")?.SetValue(tree, margin);
+            treeType.GetField("AabbMultiplier")?.SetValue(tree, multiplier);
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Could not set AABB tree properties: {ex.Message}");
+            // Continue without setting properties
+        }
+    }
+
+    /// <summary>
+    /// Clears all elements from the BVH.
+    /// </summary>
+    public void Clear()
+    {
+        try
+        {
+            tree.Reset();
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Error resetting tree: {ex.Message}");
+            // Try to recreate the tree
+            InitializeAabbTree();
+        }
+
+        wrappers.Clear();
+        elementsNearColliders.Clear();
+    }
+
+    /// <summary>
+    /// Inserts elements into the BVH using their indices.
+    /// </summary>
+    public void Insert(List<int> elementIndices)
+    {
+        foreach (int index in elementIndices)
+        {
+            try
+            {
+                // Create or get existing wrapper
+                if (!wrappers.TryGetValue(index, out ElementWrapper wrapper))
+                {
+                    wrapper = new ElementWrapper(index, getElement);
+                    wrappers[index] = wrapper;
+
+                    // Add to tree
+                    tree.CreateNode(wrapper, wrapper.GetAabb());
+                }
+                else
+                {
+                    // Update existing node
+                    wrapper.UpdateAabb();
+
+                    // Use the safer MoveNode approach
+                    SafeMoveNode(wrapper);
+                }
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"Error inserting element {index}: {ex.Message}");
+                // Continue with other elements
+            }
+        }
+    }
+
+    // Helper method to safely move nodes, working around the __.Throw calls
+    private void SafeMoveNode(ElementWrapper wrapper)
+    {
+        try
+        {
+            tree.MoveNode(wrapper, wrapper.GetAabb());
+        }
+        catch
+        {
+            // If MoveNode fails, try recreating the node
+            try
+            {
+                // Remove and recreate the node as a fallback
+                tree.RemoveNode(wrapper);
+                tree.CreateNode(wrapper, wrapper.GetAabb());
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"Error recreating node: {ex.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Finds elements within a specified range of a position.
+    /// </summary>
+    public List<int> FindNearby(Vector3 position, float range, int maxNeighbors = int.MaxValue)
+    {
+        var result = new List<int>();
+        float rangeSqr = range * range;
+
+        try
+        {
+            // Create query AABB around the position
+            Vector3 queryExtents = new Vector3(range, range, range);
+            Aabb queryAabb = new Aabb(position - queryExtents, queryExtents * 2);
+
+            // Query the tree with error handling
+            try
+            {
+                tree.Query(queryAabb, (wrapper) =>
+                {
+                    try
+                    {
+                        // Do distance check to refine results
+                        float distSqr = position.DistanceSquaredTo(wrapper.Element.Position);
+                        if (distSqr <= rangeSqr)
+                        {
+                            result.Add(wrapper.Index);
+
+                            // Stop if we reached max neighbors
+                            if (result.Count >= maxNeighbors)
+                            {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                    catch
+                    {
+                        // Skip elements that cause errors
+                        return true;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"Error in tree.Query: {ex.Message}");
+                // Fall through to the fallback below
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Error in FindNearby: {ex.Message}");
+        }
+
+        // If we found no results or an error occurred, use a fallback approach
+        if (result.Count == 0)
+        {
+            // Fallback: Brute force scan
+            foreach (var pair in wrappers)
+            {
+                try
+                {
+                    float distSqr = position.DistanceSquaredTo(pair.Value.Element.Position);
+                    if (distSqr <= rangeSqr)
+                    {
+                        result.Add(pair.Key);
+
+                        if (result.Count >= maxNeighbors)
+                        {
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                    // Skip elements that cause errors
+                    continue;
+                }
+            }
         }
 
         return result;
     }
-    public void Clear()
-    {
-        nodes.Clear();
-        nodePositions.Clear();
-        nodeSizes.Clear();
-        elementIndices.Clear();
 
-        // Create root node
-        nodes.Add(new BVHNode(-1, 0, -1, false));
-        nodePositions.Add(rootPosition);
-        nodeSizes.Add(new Vector3(rootSize, rootSize, rootSize));
-    }
-
-    public void Insert(List<int> elements)
-    {
-        // Skip if no elements
-        if (elements == null || elements.Count == 0)
-            return;
-
-        // Insert each element
-        foreach (int elementIndex in elements)
-        {
-            InsertElement(elementIndex);
-        }
-
-        // Optimize the tree (optional)
-        OptimizeTree();
-    }
-
-    private void InsertElement(int elementIndex)
-    {
-        // Start at root
-        int currentNodeIndex = 0;
-
-        while (true)
-        {
-            // Get current node
-            BVHNode node = nodes[currentNodeIndex];
-
-            // If this is a leaf node
-            if (node.firstChildIndex == -1)
-            {
-                // If there's room, add the element
-                if (node.elementCount < maxElementsPerNode)
-                {
-                    AddElementToNode(currentNodeIndex, elementIndex);
-                    break;
-                }
-                // Otherwise, split the node
-                else
-                {
-                    SplitNode(currentNodeIndex);
-
-                    // Continue traversal to place element in one of the new children
-                    OctTreeElement elem = getElement(elementIndex);
-                    int childIndex = SelectChildForElement(currentNodeIndex, elem.Position);
-                    currentNodeIndex = childIndex;
-                }
-            }
-            // If internal node, traverse to appropriate child
-            else
-            {
-                OctTreeElement elem = getElement(elementIndex);
-                int childIndex = SelectChildForElement(currentNodeIndex, elem.Position);
-                currentNodeIndex = childIndex;
-            }
-        }
-
-        // Update bounding boxes after insertion
-        UpdateBounds();
-    }
-
-    private void AddElementToNode(int nodeIndex, int elementIndex)
-    {
-        BVHNode node = nodes[nodeIndex];
-
-        // If this is the first element
-        if (node.elementCount == 0)
-        {
-            node.firstElementIndex = elementIndices.Count;
-        }
-
-        // Add the element
-        elementIndices.Add(elementIndex);
-        node.elementCount++;
-
-        // Update the node
-        nodes[nodeIndex] = node;
-
-        // Expand bounds to include the element
-        ExpandNodeBounds(nodeIndex, elementIndex);
-    }
-
-    private void ExpandNodeBounds(int nodeIndex, int elementIndex)
-    {
-        Vector3 nodePos = nodePositions[nodeIndex];
-        Vector3 nodeSize = nodeSizes[nodeIndex];
-        OctTreeElement element = getElement(elementIndex);
-
-        // Calculate element's bounds (treating as a sphere)
-        Vector3 elementMin = element.Position - new Vector3(element.Size / 2, element.Size / 2, element.Size / 2);
-        Vector3 elementMax = element.Position + new Vector3(element.Size / 2, element.Size / 2, element.Size / 2);
-
-        // Calculate node's current bounds
-        Vector3 nodeMin = nodePos - nodeSize / 2;
-        Vector3 nodeMax = nodePos + nodeSize / 2;
-
-        // Expand bounds
-        Vector3 newMin = new Vector3(
-            Mathf.Min(nodeMin.X, elementMin.X),
-            Mathf.Min(nodeMin.Y, elementMin.Y),
-            Mathf.Min(nodeMin.Z, elementMin.Z)
-        );
-
-        Vector3 newMax = new Vector3(
-            Mathf.Max(nodeMax.X, elementMax.X),
-            Mathf.Max(nodeMax.Y, elementMax.Y),
-            Mathf.Max(nodeMax.Z, elementMax.Z)
-        );
-
-        // Update node size and position
-        Vector3 newSize = newMax - newMin;
-        Vector3 newPos = newMin + newSize / 2;
-
-        // Store back to the lists
-        nodePositions[nodeIndex] = newPos;
-        nodeSizes[nodeIndex] = newSize;
-    }
-
-    private void SplitNode(int nodeIndex)
-    {
-        BVHNode node = nodes[nodeIndex];
-        Vector3 nodePos = nodePositions[nodeIndex];
-        Vector3 nodeSize = nodeSizes[nodeIndex];
-
-        // Find the longest axis
-        // 0 = X, 1 = Y, 2 = Z
-        // int axis = 0;
-        int axis = (nodeSize.Y > nodeSize.X && nodeSize.Y > nodeSize.Z) ? (1) : (nodeSize.Z > nodeSize.X && nodeSize.Z > nodeSize.Y) ? (2) : (0);
-        // if (nodeSize.Y > nodeSize.X && nodeSize.Y > nodeSize.Z)
-        //     axis = 1;
-        // else if (nodeSize.Z > nodeSize.X && nodeSize.Z > nodeSize.Y)
-        //     axis = 2;
-
-        // Collect elements from this node
-        leftElements.Clear();
-        rightElements.Clear();
-
-        for (int i = 0; i < node.elementCount; i++)
-        {
-            int elemIdx = elementIndices[node.firstElementIndex + i];
-            OctTreeElement elem = getElement(elemIdx);
-
-            // Sort by position along the chosen axis
-            float pos = 0;
-            switch (axis)
-            {
-                case 0: pos = elem.Position.X; break;
-                case 1: pos = elem.Position.Y; break;
-                case 2: pos = elem.Position.Z; break;
-            }
-
-            // Split at median (using node position)
-            float splitPos = nodePos[axis];
-            if (pos <= splitPos)
-                leftElements.Add(elemIdx);
-            else
-                rightElements.Add(elemIdx);
-        }
-
-        // Handle edge case: all elements on one side
-        if (leftElements.Count == 0 || rightElements.Count == 0)
-        {
-            // Force split in half
-            leftElements.Clear();
-            rightElements.Clear();
-
-            int half = node.elementCount / 2;
-            for (int i = 0; i < node.elementCount; i++)
-            {
-                int elemIdx = elementIndices[node.firstElementIndex + i];
-                if (i < half)
-                    leftElements.Add(elemIdx);
-                else
-                    rightElements.Add(elemIdx);
-            }
-        }
-
-        // Create two child nodes
-        int leftChildIndex = nodes.Count;
-        int rightChildIndex = leftChildIndex + 1;
-
-        // Create empty nodes initially
-        nodes.Add(new BVHNode(-1, 0, -1, false));
-        nodes.Add(new BVHNode(-1, 0, -1, false));
-
-        // Add initial positions and sizes 
-        nodePositions.Add(nodePos); // Will update later
-        nodePositions.Add(nodePos); // Will update later
-        nodeSizes.Add(nodeSize / 2);
-        nodeSizes.Add(nodeSize / 2);
-
-        // Update parent to point to children
-        node.firstChildIndex = leftChildIndex;
-        node.elementCount = 0;
-        node.firstElementIndex = -1;
-        nodes[nodeIndex] = node;
-
-        // Move elements to new lists
-        int oldFirstElementIndex = node.firstElementIndex;
-        int oldElementCount = node.elementCount;
-
-        // Add elements to left child
-        if (leftElements.Count > 0)
-        {
-            BVHNode leftChild = nodes[leftChildIndex];
-            leftChild.firstElementIndex = elementIndices.Count;
-            leftChild.elementCount = leftElements.Count;
-            nodes[leftChildIndex] = leftChild;
-
-            foreach (int elemIdx in leftElements)
-            {
-                elementIndices.Add(elemIdx);
-                ExpandNodeBounds(leftChildIndex, elemIdx);
-            }
-        }
-
-        // Add elements to right child
-        if (rightElements.Count > 0)
-        {
-            BVHNode rightChild = nodes[rightChildIndex];
-            rightChild.firstElementIndex = elementIndices.Count;
-            rightChild.elementCount = rightElements.Count;
-            nodes[rightChildIndex] = rightChild;
-
-            foreach (int elemIdx in rightElements)
-            {
-                elementIndices.Add(elemIdx);
-                ExpandNodeBounds(rightChildIndex, elemIdx);
-            }
-        }
-
-        // Remove old elements by marking them as deleted
-        // (We'll compact the list later)
-        for (int i = 0; i < oldElementCount; i++)
-        {
-            elementIndices[oldFirstElementIndex + i] = -1;
-        }
-    }
-
-    private int SelectChildForElement(int nodeIndex, Vector3 position)
-    {
-        BVHNode node = nodes[nodeIndex];
-
-        // If not split yet, return this node
-        if (node.firstChildIndex == -1)
-            return nodeIndex;
-
-        // Select child with closer centroid
-        int leftChildIndex = node.firstChildIndex;
-        int rightChildIndex = leftChildIndex + 1;
-
-        Vector3 leftPos = nodePositions[leftChildIndex];
-        Vector3 rightPos = nodePositions[rightChildIndex];
-
-        float leftDistSq = position.DistanceSquaredTo(leftPos);
-        float rightDistSq = position.DistanceSquaredTo(rightPos);
-
-        return leftDistSq <= rightDistSq ? leftChildIndex : rightChildIndex;
-    }
-
-    private void UpdateBounds()
-    {
-        // Start from leaf nodes and work up to root
-        for (int i = nodes.Count - 1; i >= 0; i--)
-        {
-            BVHNode node = nodes[i];
-
-            // Skip leaf nodes - their bounds are already updated
-            if (node.firstChildIndex == -1)
-                continue;
-
-            // For internal nodes, calculate bounds from children
-            int leftChildIndex = node.firstChildIndex;
-            int rightChildIndex = leftChildIndex + 1;
-
-            if (leftChildIndex < nodes.Count && rightChildIndex < nodes.Count)
-            {
-                Vector3 leftPos = nodePositions[leftChildIndex];
-                Vector3 leftSize = nodeSizes[leftChildIndex];
-                Vector3 rightPos = nodePositions[rightChildIndex];
-                Vector3 rightSize = nodeSizes[rightChildIndex];
-
-                // Calculate min/max of both children
-                Vector3 leftMin = leftPos - leftSize / 2;
-                Vector3 leftMax = leftPos + leftSize / 2;
-                Vector3 rightMin = rightPos - rightSize / 2;
-                Vector3 rightMax = rightPos + rightSize / 2;
-
-                // Combine bounds
-                Vector3 newMin = new Vector3(
-                    Mathf.Min(leftMin.X, rightMin.X),
-                    Mathf.Min(leftMin.Y, rightMin.Y),
-                    Mathf.Min(leftMin.Z, rightMin.Z)
-                );
-
-                Vector3 newMax = new Vector3(
-                    Mathf.Max(leftMax.X, rightMax.X),
-                    Mathf.Max(leftMax.Y, rightMax.Y),
-                    Mathf.Max(leftMax.Z, rightMax.Z)
-                );
-
-                // Update node
-                Vector3 newSize = newMax - newMin;
-                Vector3 newPos = newMin + newSize / 2;
-
-                nodePositions[i] = newPos;
-                nodeSizes[i] = newSize;
-            }
-        }
-    }
-
-    private void OptimizeTree()
-    {
-        // 1. Remove deleted elements
-        CompactElementList();
-
-        // 2. Update all bounds
-        UpdateBounds();
-    }
-
-    private void CompactElementList()
-    {
-        // Create a new list without the deleted elements
-        List<int> newElementIndices = new List<int>();
-        Dictionary<int, int> indexMapping = new Dictionary<int, int>();
-
-        // Go through old list and copy non-deleted elements
-        for (int i = 0; i < elementIndices.Count; i++)
-        {
-            int elemIdx = elementIndices[i];
-            if (elemIdx != -1)
-            {
-                indexMapping[i] = newElementIndices.Count;
-                newElementIndices.Add(elemIdx);
-            }
-        }
-
-        // Update node references
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            BVHNode node = nodes[i];
-            if (node.elementCount > 0 && node.firstElementIndex >= 0)
-            {
-                if (indexMapping.TryGetValue(node.firstElementIndex, out int newIndex))
-                {
-                    node.firstElementIndex = newIndex;
-                    nodes[i] = node;
-                }
-            }
-        }
-
-        // Replace old list with compacted list
-        elementIndices = newElementIndices;
-    }
-
-    public List<int> FindNearby(Vector3 position, float range, int maxNeighbors)
-    {
-        tempResults.Clear();
-
-        // Queue for iterative traversal
-        Queue<int> nodesToCheck = new Queue<int>();
-        nodesToCheck.Enqueue(0); // Start with root
-
-        float rangeSq = range * range;
-
-        while (nodesToCheck.Count > 0)
-        {
-            int nodeIndex = nodesToCheck.Dequeue();
-            BVHNode node = nodes[nodeIndex];
-            Vector3 nodePos = nodePositions[nodeIndex];
-            Vector3 nodeSize = nodeSizes[nodeIndex];
-
-            // Check if node's bounding box intersects with search sphere
-            if (!IntersectsSphere(nodePos, nodeSize, position, range))
-                continue;
-
-            // If leaf, check elements
-            if (node.firstChildIndex == -1)
-            {
-                for (int i = 0; i < node.elementCount; i++)
-                {
-                    // Check for valid index
-                    int elementPos = node.firstElementIndex + i;
-                    if (elementPos >= elementIndices.Count)
-                        continue;
-
-                    int elemIdx = elementIndices[elementPos];
-
-                    // Skip deleted elements
-                    if (elemIdx == -1)
-                        continue;
-
-                    OctTreeElement elem = getElement(elemIdx);
-                    if (elem.Position.DistanceSquaredTo(position) <= rangeSq)
-                    {
-                        tempResults.Add(elemIdx);
-                    }
-                }
-            }
-            // If internal, add children to queue
-            else
-            {
-                nodesToCheck.Enqueue(node.firstChildIndex);
-                nodesToCheck.Enqueue(node.firstChildIndex + 1);
-            }
-        }
-        return tempResults;
-    }
-
-    private bool IntersectsSphere(Vector3 boxCenter, Vector3 boxSize, Vector3 sphereCenter, float sphereRadius)
-    {
-        // Calculate box half extents
-        Vector3 halfSize = boxSize / 2;
-
-        // Calculate distance from sphere center to closest point on box
-        float dx = Mathf.Max(0, Mathf.Abs(sphereCenter.X - boxCenter.X) - halfSize.X);
-        float dy = Mathf.Max(0, Mathf.Abs(sphereCenter.Y - boxCenter.Y) - halfSize.Y);
-        float dz = Mathf.Max(0, Mathf.Abs(sphereCenter.Z - boxCenter.Z) - halfSize.Z);
-
-        // If the closest distance is within the sphere radius, they intersect
-        return (dx * dx + dy * dy + dz * dz) <= (sphereRadius * sphereRadius);
-    }
-
+    /// <summary>
+    /// Checks if a position is near a collider.
+    /// </summary>
     public bool IsNearCollider(Vector3 position)
     {
-        Queue<int> nodesToCheck = new Queue<int>();
-        nodesToCheck.Enqueue(0); // Start with root
+        // For simple implementation, just check bounds
+        // In a more sophisticated version, this would check against actual colliders
 
-        while (nodesToCheck.Count > 0)
-        {
-            int nodeIndex = nodesToCheck.Dequeue();
-            BVHNode node = nodes[nodeIndex];
-            Vector3 nodePos = nodePositions[nodeIndex];
-            Vector3 nodeSize = nodeSizes[nodeIndex];
+        float boundaryCheck = halfSize * 0.95f;
+        Vector3 distFromCenter = (position - rootPosition).Abs();
 
-            // Skip if node doesn't have colliders
-            if (!node.hasCollider)
-                continue;
-
-            // Calculate distance to node (simple AABB check)
-            Vector3 nodeMin = nodePos - nodeSize / 2;
-            Vector3 nodeMax = nodePos + nodeSize / 2;
-
-            bool insideBox =
-                position.X >= nodeMin.X && position.X <= nodeMax.X &&
-                position.Y >= nodeMin.Y && position.Y <= nodeMax.Y &&
-                position.Z >= nodeMin.Z && position.Z <= nodeMax.Z;
-
-            // If inside leaf with collider, we're near a collider
-            if (insideBox && node.firstChildIndex == -1)
-                return true;
-
-            // If inside internal node, check children
-            if (insideBox && node.firstChildIndex != -1)
-            {
-                nodesToCheck.Enqueue(node.firstChildIndex);
-                nodesToCheck.Enqueue(node.firstChildIndex + 1);
-            }
-        }
-
-        return false;
+        return distFromCenter.X > boundaryCheck ||
+               distFromCenter.Y > boundaryCheck ||
+               distFromCenter.Z > boundaryCheck;
     }
 
+    /// <summary>
+    /// Wraps a position to stay within bounds.
+    /// </summary>
     public Vector3 WrapPosition(Vector3 position)
     {
-        // Calculate min and max boundaries based on root size
-        float halfSize = rootSize / 2;
-        float minX = rootPosition.X - halfSize;
-        float maxX = rootPosition.X + halfSize;
-        float minY = rootPosition.Y - halfSize;
-        float maxY = rootPosition.Y + halfSize;
-        float minZ = rootPosition.Z - halfSize;
-        float maxZ = rootPosition.Z + halfSize;
+        Vector3 result = position;
+        Vector3 size = new Vector3(rootSize, rootSize, rootSize);
+        Vector3 min = rootPosition - (size / 2);
+        Vector3 max = rootPosition + (size / 2);
 
-        // Wrap X
-        if (position.X > maxX)
-            position.X = minX + (position.X - maxX);
-        else if (position.X < minX)
-            position.X = maxX - (minX - position.X);
+        // Wrap along each axis
+        if (result.X < min.X) result.X = max.X - (min.X - result.X);
+        else if (result.X > max.X) result.X = min.X + (result.X - max.X);
 
-        // Wrap Y
-        if (position.Y > maxY)
-            position.Y = minY + (position.Y - maxY);
-        else if (position.Y < minY)
-            position.Y = maxY - (minY - position.Y);
+        if (result.Y < min.Y) result.Y = max.Y - (min.Y - result.Y);
+        else if (result.Y > max.Y) result.Y = min.Y + (result.Y - max.Y);
 
-        // Wrap Z
-        if (position.Z > maxZ)
-            position.Z = minZ + (position.Z - maxZ);
-        else if (position.Z < minZ)
-            position.Z = maxZ - (minZ - position.Z);
+        if (result.Z < min.Z) result.Z = max.Z - (min.Z - result.Z);
+        else if (result.Z > max.Z) result.Z = min.Z + (result.Z - max.Z);
 
-        return position;
+        return result;
     }
 
+    /// <summary>
+    /// Updates collider information for visualization and queries.
+    /// </summary>
     public void UpdateColliderInfo()
     {
-        // Use physics queries to update collider flags
-        var spaceState = GetWorld3D().DirectSpaceState;
-        MarkNodesWithColliders(spaceState);
-    }
+        elementsNearColliders.Clear();
 
-    private void MarkNodesWithColliders(PhysicsDirectSpaceState3D spaceState)
-    {
-        // Iterate through all nodes
-        // for (int i = 0; i < nodes.Count; i++)
-        // {
-        //     BVHNode node = nodes[i];
-        //     Vector3 nodePos = nodePositions[i];
-        //     Vector3 nodeSize = nodeSizes[i];
-        //
-        //     // Skip tiny nodes for performance
-        //     if (nodeSize.X < 0.1f || nodeSize.Y < 0.1f || nodeSize.Z < 0.1f)
-        //         continue;
-        //
-        //     // Test for colliders
-        //     var shape = new BoxShape3D();
-        //     shape.Size = nodeSize;
-        //
-        //     var parameters = new PhysicsShapeQueryParameters3D();
-        //     parameters.Shape = shape;
-        //     parameters.Transform = new Transform3D(Basis.Identity, nodePos);
-        //     parameters.CollideWithBodies = true;
-        //     parameters.CollisionMask = 1; // Adjust based on your collision layers
-        //
-        //     var results = spaceState.IntersectShape(parameters);
-        //
-        //     // Mark node
-        //     node.hasCollider = results.Count > 0;
-        //     nodes[i] = node;
-        // }
-        //
-        // // Propagate collider flags up the tree
-        // PropagateColliderFlags();
-    }
-
-    private void PropagateColliderFlags()
-    {
-        // Start from leaves and go up
-        for (int i = nodes.Count - 1; i >= 0; i--)
+        // Mark elements near the boundaries as near colliders
+        foreach (var pair in wrappers)
         {
-            BVHNode node = nodes[i];
+            bool isNearCollider = IsNearCollider(pair.Value.Element.Position);
+            pair.Value.IsNearCollider = isNearCollider;
 
-            // Skip leaf nodes
-            if (node.firstChildIndex == -1)
-                continue;
-
-            // Get children
-            int leftIndex = node.firstChildIndex;
-            int rightIndex = leftIndex + 1;
-
-            // Check if children exist
-            if (leftIndex < nodes.Count && rightIndex < nodes.Count)
+            if (isNearCollider)
             {
-                // Inherit collider flags from children
-                bool leftHasCollider = nodes[leftIndex].hasCollider;
-                bool rightHasCollider = nodes[rightIndex].hasCollider;
-
-                node.hasCollider = leftHasCollider || rightHasCollider;
-                nodes[i] = node;
+                elementsNearColliders.Add(pair.Key);
             }
         }
+    }
+
+    /// <summary>
+    /// Gets AABB data for the BVH tree to visualize it.
+    /// </summary>
+    public List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData()
+    {
+        var result = new List<(Vector3, Vector3, bool, bool)>();
+
+        // Create a hash set of wrapper indices that are near colliders for quick lookup
+        HashSet<ElementWrapper> collidingWrappers = new HashSet<ElementWrapper>();
+        foreach (var index in elementsNearColliders)
+        {
+            if (wrappers.TryGetValue(index, out var wrapper))
+            {
+                collidingWrappers.Add(wrapper);
+            }
+        }
+
+        try
+        {
+            // Iterate through BVH nodes if available
+            foreach (var node in tree.EnumerateNodes())
+            {
+                try
+                {
+                    Aabb aabb = node.Aabb;
+                    Vector3 position = aabb.Position + (aabb.Size / 2);
+                    Vector3 size = aabb.Size;
+                    bool isLeaf = node.IsLeaf;
+                    bool hasCollider = isLeaf && node.Data != null && collidingWrappers.Contains(node.Data);
+
+                    result.Add((position, size, isLeaf, hasCollider));
+                }
+                catch
+                {
+                    // Skip nodes that cause errors
+                    continue;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Error getting visualization data: {ex.Message}");
+
+            // Fallback: Just show the root bounds
+            Aabb rootAabb = GetAabb();
+            result.Add((rootPosition, new Vector3(rootSize, rootSize, rootSize), false, false));
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Implements ICollider for the BVHManager itself.
+    /// </summary>
+    public Aabb GetAabb()
+    {
+        return new Aabb(
+            rootPosition - new Vector3(halfSize, halfSize, halfSize),
+            new Vector3(rootSize, rootSize, rootSize)
+        );
     }
 }
