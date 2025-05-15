@@ -36,10 +36,6 @@ metadata/_custom_type_script = "uid://byx1pb36p1cxj"
 
 [node name="BoidParameterUi" parent="." instance=ExtResource("3_g8jbb")]
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-use_collision = true
-size = Vector3(156.275, 150.359, 1)
-
 [node name="Simulator" type="Node3D" parent="."]
 script = ExtResource("5_2344b")
 Mode = 2

@@ -201,7 +201,7 @@ public partial class AABBTree<TData> where TData : class
     /// This margin helps to reduce the frequency of updates needed when objects move slightly,
     /// improving performance for dynamic scenes with many moving objects.
     /// </remarks>
-    private float AabbMargin = 0.1f;
+    public float AabbMargin = 0.1f;
 
     /// <summary>
     /// A multiplier used to expand AABBs in the direction of movement.
@@ -210,7 +210,7 @@ public partial class AABBTree<TData> where TData : class
     /// This multiplier is used to predict future positions of moving objects,
     /// further reducing the need for frequent updates and improving overall performance.
     /// </remarks>
-    private float AabbMultiplier = 5.0f;
+    public float AabbMultiplier = 5.0f;
 
     /// <summary>
     /// A concurrent dictionary mapping data objects to their corresponding node indices in the tree.

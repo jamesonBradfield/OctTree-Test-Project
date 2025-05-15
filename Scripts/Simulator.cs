@@ -12,13 +12,13 @@ public partial class Simulator : Node3D
     // Configuration
     [Export] public SpatialPartitioningMode Mode = SpatialPartitioningMode.Automatic;
     [Export] public float RefreshInterval = 0.25f;
-    [Export] public float ColliderMarkingInterval = 1.0f;
+    // [Export] public float ColliderMarkingInterval = 1.0f;
     [Export] public BoidResource boidResource;
     [Export] public OctreeResource octreeResource;
 
     // Timing
     private float timeSinceLastRefresh = 0f;
-    private float timeSinceLastColliderUpdate = 0f;
+    // private float timeSinceLastColliderUpdate = 0f;
 
     // For automatic mode
     private const int AUTO_SWITCH_THRESHOLD = 500; // Switch to cells above this count
@@ -70,7 +70,7 @@ public partial class Simulator : Node3D
             // Note: BVH isn't part of automatic switching yet
         }
 
-        // Clean up existing spatial system
+        // Clean up existing spatial system (this seems extreme)
         if (spatialSystem != null && spatialSystem is Node node)
         {
             node.QueueFree();
@@ -162,7 +162,7 @@ public partial class Simulator : Node3D
 
         // Initial spatial system update
         RefreshSpatialSystem();
-        UpdateColliderInfo();
+        // UpdateColliderInfo();
         AssertDataSynchronization();
     }
 
@@ -214,12 +214,12 @@ public partial class Simulator : Node3D
         }
 
         // Update collider info less frequently
-        timeSinceLastColliderUpdate += (float)delta;
-        if (timeSinceLastColliderUpdate >= ColliderMarkingInterval)
-        {
-            UpdateColliderInfo();
-            timeSinceLastColliderUpdate = 0f;
-        }
+        // timeSinceLastColliderUpdate += (float)delta;
+        // if (timeSinceLastColliderUpdate >= ColliderMarkingInterval)
+        // {
+        //     UpdateColliderInfo();
+        //     timeSinceLastColliderUpdate = 0f;
+        // }
 
         // Check for mode switching in Automatic mode
         if (Mode == SpatialPartitioningMode.Automatic)

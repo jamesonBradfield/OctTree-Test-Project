@@ -106,10 +106,8 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
     {
         try
         {
-            // Use reflection to set these properties since they might be private
-            var treeType = tree.GetType();
-            treeType.GetField("AabbMargin")?.SetValue(tree, margin);
-            treeType.GetField("AabbMultiplier")?.SetValue(tree, multiplier);
+            tree.AabbMargin = margin;
+            tree.AabbMultiplier = multiplier;
         }
         catch (Exception ex)
         {
