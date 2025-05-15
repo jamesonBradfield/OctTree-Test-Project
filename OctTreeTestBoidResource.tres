@@ -15,5 +15,5 @@ CohesionWeight = 0.8
 SeparationWeight = 0.2
 FollowWeight = 1.0
 MaxNeighborsToConsider = 4
-count = 10000
+count = 400
 metadata/_custom_type_script = "uid://cjdaoultkra8t"
