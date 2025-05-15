@@ -13,7 +13,7 @@ public partial class BoidManager : Node3D
     private List<BoidRule> rules = new();
 
     // Spatial cell manager for optimization (optional)
-    private SpatialCellManager cellManager;
+    // private SpatialCellManager cellManager;
 
     // Reusable collections
     private List<int> filteredNeighborsCache = new List<int>();
@@ -104,24 +104,24 @@ public partial class BoidManager : Node3D
     }
 
     // Process all boid behaviors - now works with ISpatialPartitioning
-    public void UpdateBoidBehaviors(List<OctTreeElement> elements, ISpatialPartitioning spatialSystem)
+    public void UpdateBoidBehaviors(List<SpatialElement> elements, ISpatialPartitioning spatialSystem)
     {
         // Check if we should use cell manager's optimized processing
-        if (spatialSystem is SpatialCellManager cellManager)
-        {
-            // Let cell manager handle optimization decisions
-            if (cellManager.ShouldUseCellOptimization(elements.Count))
-            {
-                // Process with cell manager's optimized approach
-                cellManager.ProcessCells(
-                    elements,
-                    spatialSystem, // Pass the spatial system (which could be itself as ISpatialPartitioning)
-                    (boidIdx, neighbors, elems) => FilterNeighborsByDistance(boidIdx, neighbors, elems),
-                    (boidIdx, filteredNeighbors) => ProcessBoid(boidIdx, filteredNeighbors, elements)
-                );
-                return;
-            }
-        }
+        // if (spatialSystem is SpatialCellManager cellManager)
+        // {
+        //     // Let cell manager handle optimization decisions
+        //     if (cellManager.ShouldUseCellOptimization(elements.Count))
+        //     {
+        //         // Process with cell manager's optimized approach
+        //         cellManager.ProcessCells(
+        //             elements,
+        //             spatialSystem, // Pass the spatial system (which could be itself as ISpatialPartitioning)
+        //             (boidIdx, neighbors, elems) => FilterNeighborsByDistance(boidIdx, neighbors, elems),
+        //             (boidIdx, filteredNeighbors) => ProcessBoid(boidIdx, filteredNeighbors, elements)
+        //         );
+        //         return;
+        //     }
+        // }
 
         // Generic approach for any spatial system (including octree or cell manager fallback)
         for (int index = 0; index < elements.Count; index++)
@@ -139,7 +139,7 @@ public partial class BoidManager : Node3D
     }
 
     // Process an individual boid
-    private void ProcessBoid(int boidIdx, List<int> neighbors, List<OctTreeElement> elements)
+    private void ProcessBoid(int boidIdx, List<int> neighbors, List<SpatialElement> elements)
     {
         // Apply all rules to calculate total force
         Vector3 totalForce = Vector3.Zero;
@@ -157,7 +157,7 @@ public partial class BoidManager : Node3D
     }
 
     // Filter neighbors by distance only (no visibility checks)
-    private List<int> FilterNeighborsByDistance(int self, List<int> neighbors, List<OctTreeElement> elements)
+    private List<int> FilterNeighborsByDistance(int self, List<int> neighbors, List<SpatialElement> elements)
     {
         filteredNeighborsCache.Clear();
         float maxRangeSqr = GetMaxRuleRange() * GetMaxRuleRange();

@@ -7,10 +7,10 @@ using System.Diagnostics;
 /// BVHManager implements the ISpatialPartitioning interface using an AABBTree
 /// for efficient spatial queries in a boid simulation.
 /// </summary>
-public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
+public partial class BVHManager : Node3D, ICollider
 {
     // The underlying BVH structure
-    private AABBTree<ElementWrapper> tree;
+    private AABBTree<SpatialElement> tree;
 
     // Root position and size (for bounds checking and wrapping)
     private Vector3 rootPosition;
@@ -18,60 +18,18 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
     private float halfSize;
 
     // Function to get elements from the simulation
-    private Func<int, OctTreeElement> getElement;
+    private Func<int, SpatialElement> getElement;
 
     // Dictionary to map element indices to their wrappers
-    private Dictionary<int, ElementWrapper> wrappers = new Dictionary<int, ElementWrapper>();
+    private Dictionary<int, SpatialElement> wrappers = new Dictionary<int, SpatialElement>();
 
     // Collider tracking
     private List<int> elementsNearColliders = new List<int>();
 
-    // Wrapper class to store element index and implement ICollider
-    private class ElementWrapper : ICollider
-    {
-        public int Index { get; private set; }
-        public OctTreeElement Element => getElementFunc(Index);
-        private Func<int, OctTreeElement> getElementFunc;
-
-        // Cache the AABB to avoid recalculations
-        private Aabb cachedAabb;
-        private Vector3 cachedPosition;
-
-        public bool IsNearCollider { get; set; } = false;
-
-        public ElementWrapper(int index, Func<int, OctTreeElement> getElementFunc)
-        {
-            Index = index;
-            this.getElementFunc = getElementFunc;
-            UpdateAabb();
-        }
-
-        public void UpdateAabb()
-        {
-            var element = Element;
-            cachedPosition = element.Position;
-
-            // Create AABB around the element with its size
-            float halfSize = element.Size / 2f;
-            Vector3 extents = new Vector3(halfSize, halfSize, halfSize);
-            cachedAabb = new Aabb(cachedPosition - extents, extents * 2);
-        }
-
-        public Aabb GetAabb()
-        {
-            // Check if position has changed
-            if (Element.Position != cachedPosition)
-            {
-                UpdateAabb();
-            }
-            return cachedAabb;
-        }
-    }
-
     /// <summary>
     /// Initializes the BVH Manager with simulation parameters.
     /// </summary>
-    public void Initialize(Vector3 rootPosition, float rootSize, int capacity, Func<int, OctTreeElement> getElement)
+    public void Initialize(Vector3 rootPosition, float rootSize, int capacity, Func<int, SpatialElement> getElement)
     {
         this.rootPosition = rootPosition;
         this.rootSize = rootSize;
@@ -91,13 +49,13 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
     {
         try
         {
-            tree = new AABBTree<ElementWrapper>();
+            tree = new AABBTree<SpatialElement>();
         }
         catch (Exception ex)
         {
             GD.PrintErr($"Error initializing AABBTree: {ex.Message}");
             // Create fallback if initialization fails
-            tree = new AABBTree<ElementWrapper>();
+            tree = new AABBTree<SpatialElement>();
         }
     }
 
@@ -146,21 +104,15 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
             try
             {
                 // Create or get existing wrapper
-                if (!wrappers.TryGetValue(index, out ElementWrapper wrapper))
+                if (!wrappers.TryGetValue(index, out SpatialElement wrapper))
                 {
-                    wrapper = new ElementWrapper(index, getElement);
+                    Vector3 position = Vector3.Zero;
+                    Vector3 Size = Vector3.Zero;
+                    wrapper = new SpatialElement(position, Size, false);
                     wrappers[index] = wrapper;
 
                     // Add to tree
                     tree.CreateNode(wrapper, wrapper.GetAabb());
-                }
-                else
-                {
-                    // Update existing node
-                    wrapper.UpdateAabb();
-
-                    // Use the safer MoveNode approach
-                    SafeMoveNode(wrapper);
                 }
             }
             catch (Exception ex)
@@ -172,7 +124,7 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
     }
 
     // Helper method to safely move nodes, working around the __.Throw calls
-    private void SafeMoveNode(ElementWrapper wrapper)
+    private void SafeMoveNode(SpatialElement wrapper)
     {
         try
         {
@@ -216,7 +168,7 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
                     try
                     {
                         // Do distance check to refine results
-                        float distSqr = position.DistanceSquaredTo(wrapper.Element.Position);
+                        float distSqr = position.DistanceSquaredTo(wrapper.Position);
                         if (distSqr <= rangeSqr)
                         {
                             result.Add(wrapper.Index);
@@ -255,7 +207,7 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
             {
                 try
                 {
-                    float distSqr = position.DistanceSquaredTo(pair.Value.Element.Position);
+                    float distSqr = position.DistanceSquaredTo(pair.Value.Position);
                     if (distSqr <= rangeSqr)
                     {
                         result.Add(pair.Key);
@@ -277,8 +229,19 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
         return result;
     }
 
+    [Conditional("DEBUG")]
+    public void _AssertTreeOk(bool ignoreAabbConsistency = false)
+    {
+        tree._AssertTreeOk(ignoreAabbConsistency);
+    }
+
+    public bool MoveNode(SpatialElement data, Aabb aabb, bool autoDisplacement = false, bool forceMove = false)
+    {
+        return tree.MoveNode(data, aabb, autoDisplacement, forceMove);
+    }
     /// <summary>
     /// Checks if a position is near a collider.
+    /// would like to move collision code to a separate script like our visualizer.
     /// </summary>
     public bool IsNearCollider(Vector3 position)
     {
@@ -294,7 +257,9 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
     }
 
     /// <summary>
-    /// Wraps a position to stay within bounds.
+    /// Wraps a position to stay within simulation bounds.
+    /// NOTE: would like to move this to our simulation, and define a "separate bounds" that way our BVH can grow and shrink as needed without affecting our wrapping.
+    ///
     /// </summary>
     public Vector3 WrapPosition(Vector3 position)
     {
@@ -344,7 +309,7 @@ public partial class BVHManager : Node3D, ISpatialPartitioning, ICollider
         var result = new List<(Vector3, Vector3, bool, bool)>();
 
         // Create a hash set of wrapper indices that are near colliders for quick lookup
-        HashSet<ElementWrapper> collidingWrappers = new HashSet<ElementWrapper>();
+        HashSet<SpatialElement> collidingWrappers = new HashSet<SpatialElement>();
         foreach (var index in elementsNearColliders)
         {
             if (wrappers.TryGetValue(index, out var wrapper))

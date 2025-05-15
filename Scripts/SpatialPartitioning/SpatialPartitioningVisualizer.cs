@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public partial class SpatialPartitioningVisualizer : Node3D
 {
     [Export] public bool Visible { get; set; } = false;
-    public ISpatialPartitioning Target { get; set; }
+    public BVHManager Target { get; set; }
 
     // Visualization options
     [Export] public Color LeafNodeColor = new Color(0, 1, 0, 0.2f);
@@ -29,20 +29,7 @@ public partial class SpatialPartitioningVisualizer : Node3D
     private List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> GetVisualizationData()
     {
         // Request visualization data from the spatial system
-        if (Target is BVHManager bvh)
-        {
-            return bvh.GetVisualizationData();
-        }
-        else if (Target is DataOrientedOctTree octree)
-        {
-            return octree.GetVisualizationData();
-        }
-        else if (Target is SpatialCellManager cellManager)
-        {
-            return cellManager.GetVisualizationData();
-        }
-
-        return new List<(Vector3, Vector3, bool, bool)>();
+        return Target.GetVisualizationData();
     }
 
     private void DrawSpatialSystem(List<(Vector3 position, Vector3 size, bool isLeaf, bool hasCollider)> nodes)

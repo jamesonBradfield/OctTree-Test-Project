@@ -4,10 +4,10 @@ using System.Diagnostics;
 
 public partial class Simulator : Node3D
 {
-    private List<OctTreeElement> elements = new();
+    private List<SpatialElement> elements = new();
 
     private BoidManager boidManager;
-    public ISpatialPartitioning spatialSystem;
+    public BVHManager spatialSystem;
 
     // Configuration
     [Export] public SpatialPartitioningMode Mode = SpatialPartitioningMode.Automatic;
@@ -76,43 +76,15 @@ public partial class Simulator : Node3D
             node.QueueFree();
         }
 
-        // Create new system with standardized initialization
-        if (currentMode == SpatialPartitioningMode.OctTree)
-        {
-            var octree = new DataOrientedOctTree();
-            AddChild(octree);
-            octree.Initialize(
-                Position,
-                octreeResource.RootSize,
-                octreeResource.MaxElementsPerNode,
-                index => elements[index]
-            );
-            spatialSystem = octree;
-        }
-        else if (currentMode == SpatialPartitioningMode.BVH)
-        {
-            var bvhManager = new BVHManager();
-            AddChild(bvhManager);
-            bvhManager.Initialize(
-                Position,
-                octreeResource.RootSize,  // Use same size for consistency
-                octreeResource.MaxElementsPerNode,  // Use as density hint
-                index => elements[index]  // Same callback function
-            );
-            spatialSystem = bvhManager;
-        }
-        else // SpatialCell mode
-        {
-            var cellManager = new SpatialCellManager();
-            AddChild(cellManager);
-            cellManager.Initialize(
-                Position,
-                octreeResource.RootSize,  // Use same size for consistency
-                octreeResource.MaxElementsPerNode,  // Use as density hint
-                index => elements[index]  // Same callback function
-            );
-            spatialSystem = cellManager;
-        }
+        var bvhManager = new BVHManager();
+        AddChild(bvhManager);
+        bvhManager.Initialize(
+            Position,
+            octreeResource.RootSize,  // Use same size for consistency
+            octreeResource.MaxElementsPerNode,  // Use as density hint
+            index => elements[index]  // Same callback function
+        );
+        spatialSystem = bvhManager;
         visualizer.Target = spatialSystem;
     }
 
@@ -147,7 +119,7 @@ public partial class Simulator : Node3D
             );
 
             // Add positional data to simulator
-            elements.Add(new OctTreeElement(position, 1.0f));
+            elements.Add(new SpatialElement(position, 1.0f, false));
 
             // Add velocity and acceleration to BoidManager
             boidManager.AddBoidData(
@@ -202,7 +174,7 @@ public partial class Simulator : Node3D
 
             // Apply position wrapping if needed
             newPosition = spatialSystem.WrapPosition(newPosition);
-            elements[i] = new OctTreeElement(newPosition, elements[i].Size);
+            elements[i] = new SpatialElement(newPosition, elements[i].Size, false);
         }
 
         // Update spatial system periodically
@@ -232,7 +204,6 @@ public partial class Simulator : Node3D
                 // Need to switch modes
                 InitializeSpatialSystem();
                 RefreshSpatialSystem();
-                UpdateColliderInfo();
             }
         }
 
@@ -245,27 +216,14 @@ public partial class Simulator : Node3D
 
         for (int i = 0; i < elements.Count; i++)
         {
-            refreshIndices.Add(i);
-        }
-
-        spatialSystem.Clear();
-        spatialSystem.Insert(refreshIndices);
-
-        // Special case for SpatialCellManager
-        if (spatialSystem is SpatialCellManager cellManager)
-        {
-            cellManager.UpdateCells(refreshIndices);
+            spatialSystem.MoveNode(elements[i], elements[i].GetAabb());
         }
     }
 
-    private void UpdateColliderInfo()
-    {
-        spatialSystem.UpdateColliderInfo();
-    }
     // Methods to add/remove boids
     public void AddBoid(Vector3 position, float size)
     {
-        elements.Add(new OctTreeElement(position, size));
+        elements.Add(new SpatialElement(position, size, false));
         boidManager.AddBoidData((float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5), (float)GD.RandRange(-1.5, 1.5));
         AssertDataSynchronization();
     }

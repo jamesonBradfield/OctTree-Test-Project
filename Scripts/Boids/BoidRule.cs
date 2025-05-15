@@ -7,7 +7,7 @@ public abstract partial class BoidRule : Node
 
     // Virtual method now includes access to all boid data
     public virtual Vector3 CalculateForce(int boidIndex, List<int> neighbors,
-                                         List<OctTreeElement> elements,
+                                         List<SpatialElement> elements,
                                          List<Vector3> velocities)
     {
         return Vector3.Zero;
