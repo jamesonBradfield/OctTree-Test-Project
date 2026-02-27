@@ -3,6 +3,7 @@ Post Mortem
 The Rust implementation (GDExtension) for this OctTree was unfortunately lost during a system migration, but the video below demonstrates the performance achieved (100k boids at 60fps).
 
 Watch the 100k Boids Demonstration
+https://www.youtube.com/watch?v=NAF7I6-K-Vo
 Lessons Learned & Architecture Decisions
 
 - Architecture > Language: The language used doesn't matter nearly as much as the memory architecture. Flat arrays and direct UID/RID interactions with Godot's PhysicsServer and RenderingServer are the closest you can get to the metal, bypassing the overhead of the standard Node tree.
