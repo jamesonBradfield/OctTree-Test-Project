@@ -1,0 +1,3 @@
+# Post Mortem...
+The Rust implementation (GDExtension) for this OctTree was unfortunately lost during a system migration, but the video below demonstrates the performance achieved (100k boids at 60fps).
+https://www.youtube.com/watch?v=NAF7I6-K-Vo
